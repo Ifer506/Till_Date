@@ -6,6 +6,8 @@ const path = require("path");
 const { pool }= require("../../db");
 
 
+
+
 // const signin = async (req,res) => {
 
 //     const { id, email, password } = req.body;
@@ -57,7 +59,7 @@ const { pool }= require("../../db");
 // }
 
 
-const signin = async (req, res) => {
+const signup = async (req, res) => {
   try {
     const { id, email, password } = req.body;
 
@@ -81,5 +83,46 @@ const signin = async (req, res) => {
   }
 };
 
-module.exports = { signin };
+const signin = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+  
+      // Check for missing credentials
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+      }
+  
+      // Check if user exists
+      const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+      const user = result.rows[0];
+  
+      if (!user) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+  
+      // Compare password
+    //   const isMatch = await bcrypt.compare(password, user.password);
+  
+    //   if (!isMatch) {
+    //     return res.status(401).json({ message: "Invalid credentials 2" });
+    //   }
+  
+      // Generate JWT
+      const token = jwt.sign(
+        { id: user.id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+  
+      // Send token in response
+      res.status(200).json({ message: "Login successful", token });
+  
+    } catch (err) {
+      console.error("❌ Login error:", err.message);
+      res.status(500).json({ message: "Server error", error: err.message });
+    }
+  };
+  
+
+module.exports = { signup , signin};
 

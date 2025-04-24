@@ -8,8 +8,8 @@ router.get("/", (req, res) => {
     res.send("API is working and is in user");
 });
 
-router.post("/", authController.signin);
-
+router.post("/register", authController.signup);
+router.post("/login", authController.signin)
 
 module.exports = router;
 
