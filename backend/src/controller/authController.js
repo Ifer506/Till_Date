@@ -97,7 +97,7 @@ const signin = async (req, res) => {
       const user = result.rows[0];
   
       if (!user) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({success:false, message: "Invalid credentials" });
       }
   
       // Compare password
@@ -115,7 +115,7 @@ const signin = async (req, res) => {
       );
   
       // Send token in response
-      res.status(200).json({ message: "Login successful", token });
+      res.status(200).json({success: true, message: "Login successful", token });
   
     } catch (err) {
       console.error("❌ Login error:", err.message);

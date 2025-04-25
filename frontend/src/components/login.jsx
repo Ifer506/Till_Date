@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import logo from "../assets/till_date_circle.png";
 // import { Toaster, toast } from 'sooner';
 import { Toaster, toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authServices";
 
 // import { useAuth } from "../utils/authContext";
@@ -17,7 +18,7 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   // const dispatch = useDispatch()
   // const auth = useAuth();
 
@@ -41,14 +42,18 @@ const LoginPage = () => {
         // const response = await axios.post("/user/login", user);
         const response = await loginUser(user);
         console.log(response);
+
         if (response.data.success) {
-          toast.success(response.data.toast);
+          toast.success(response.data.message || "Login successful!");
+          console.log("login successful");
+
           localStorage.setItem("token", response.data.token);
-          // navigate("/home");
-          navigate.Home;
+          navigate("/home");
         } else {
-          toast.success(response.data.toast);
-          toast.success("no error");
+          console.log("failed");
+          toast.error(response.data.toast || "Login failed!");
+
+          // toast.success(response.data.toast);
         }
       }
     } catch (error) {

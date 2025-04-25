@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Toaster, toast } from 'react-hot-toast';
 import './App.css'
 import { Route, Routes, useNavigate } from "react-router-dom";
-// import Home from "./components/home";
+import Home from "./components/home";
 import  LoginPage  from './components/login';
 
 function App() {
@@ -13,6 +13,11 @@ function App() {
     <div>
       
     <LoginPage/>
+    <Routes>
+    <Route path="/" element={<LoginPage />} />
+    <Route path="/home" element={<Home />} />
+
+    </Routes>
     </div>
     
   )
