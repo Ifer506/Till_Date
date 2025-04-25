@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import logo from "../assets/till_date_circle.png";
 // import { Toaster, toast } from 'sooner';
-import { Toaster, toast } from 'react-hot-toast';
-
+import { Toaster, toast } from "react-hot-toast";
+import { loginUser } from "../services/authServices";
 
 // import { useAuth } from "../utils/authContext";
 
@@ -13,26 +13,24 @@ const LoginPage = () => {
   //   const toggleShowPassword = () => {
   //     setShowPassword(!showPassword);
   //   };
-  //   const [credentials, setCredentials] = useState({
-  //     email: "",
-  //     password: "",
-  //   });
-  //   const navigate = useNavigate();
-  //   // const dispatch = useDispatch()
-  //   const auth = useAuth();
+  const [credentials, setCredentials] = useState({
+    email: "",
+    password: "",
+  });
+  // const navigate = useNavigate();
+  // const dispatch = useDispatch()
+  // const auth = useAuth();
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
     // Prevent page reload
-    
-    
+
     console.log(email, password);
 
     try {
       if (!email || !password) {
         // message.error("Fields cannot be left empty");
         toast.error("Fields cannot be left empty");
-
       } else {
         const user = {
           email: email,
@@ -40,26 +38,23 @@ const LoginPage = () => {
         };
         // auth.setEmail(user.email);
 
-        // const response = await axios.post("/auth/login", user);
-        // console.log(response);
-        // if (response.data.success) {
-        //   toast.success(response.data.toast);
-        //   localStorage.setItem("token", response.data.token);
-        //   navigate("/home");
-        // } else {
-        //   console.log("Else");
-
-          // toast.error(response.data.toast);
+        // const response = await axios.post("/user/login", user);
+        const response = await loginUser(user);
+        console.log(response);
+        if (response.data.success) {
+          toast.success(response.data.toast);
+          localStorage.setItem("token", response.data.token);
+          // navigate("/home");
+          navigate.Home;
+        } else {
+          toast.success(response.data.toast);
           toast.success("no error");
-        // }
+        }
       }
     } catch (error) {
       toast.error("Unable to Login");
     }
-  
   };
-
-     
 
   return (
     <div
@@ -132,11 +127,11 @@ const LoginPage = () => {
                 </div>
 
                 <div className="mt-6">
-                <Toaster />
+                  <Toaster />
                   <button
                     type="submit"
-                    
                     onClick={handleSubmit}
+                    // onClick={handleLogin}
                     className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:bg-blue-400 focus:ring focus:ring-blue-300 focus:ring-opacity-50"
                   >
                     Sign in
