@@ -14,3 +14,7 @@ export const registerUser = async (userData) => {
 export const loginUser = async (loginData) => {
   return API.post("/user/login", loginData);
 };
+
+export const userDetail = async (id) => {
+  return API.get(`/user/profile/${id}`,id);
+};

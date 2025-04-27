@@ -5,6 +5,9 @@ const app = express();
 const path = require("path");
 const { pool } = require("../../db");
 
+const profileImage = path.join(__dirname, "uploads", "png");
+
+
 // const signin = async (req,res) => {
 
 //     const { id, email, password } = req.body;
@@ -57,9 +60,9 @@ const { pool } = require("../../db");
 
 const signup = async (req, res) => {
   try {
-    const { id, email, password ,fullName,phone} = req.body;
+    const { id, email, password, fullName, phone } = req.body;
 
-    if (!id || !email || !password ) {
+    if (!id || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
     const saltRounds = 12;
@@ -70,7 +73,13 @@ const signup = async (req, res) => {
       RETURNING *;
     `;
 
-    const result = await pool.query(insert_query, [id, email, hashedPassword,fullName,phone]);
+    const result = await pool.query(insert_query, [
+      id,
+      email,
+      hashedPassword,
+      fullName,
+      phone,
+    ]);
 
     console.log("✅ User inserted:", result.rows[0]);
     res.status(201).json({ message: "User created", user: result.rows[0] });
@@ -125,4 +134,24 @@ const signin = async (req, res) => {
   }
 };
 
-module.exports = { signup, signin };
+const userDetail = async (req,res) => {
+  try{
+    const userId = req.params.id;
+    const result = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+    const user = result.rows[0];
+
+    
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.json({ success: true, data: user });
+  }catch(error){
+    console.error(error);
+    res.status(500).json({success : false , message:"Internal error canst send user data"})
+  }
+};
+
+module.exports = { signup, signin , userDetail};

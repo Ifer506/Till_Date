@@ -10,6 +10,7 @@ router.get("/", (req, res) => {
 
 router.post("/register", authController.signup);
 router.post("/login", authController.signin)
+router.get("/profile/:id",authController.userDetail);
 
 module.exports = router;
 
