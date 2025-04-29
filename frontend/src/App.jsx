@@ -4,9 +4,14 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 
 // Components
+import LoginPage from "./components/login";
 import Home from "./components/home";
 import Inventory from "./components/inventory";
-import LoginPage from "./components/login";
+import Sales from "./components/sales";
+import Setting from "./components/Setting";
+import Salary from "./components/Salary";
+import Bill from "./components/Bill";
+import Customers from "./components/Customers";
 
 // Layout
 import AppLayout from "./layouts/AppLayout";
@@ -55,6 +60,10 @@ function App() {
         >
           <Route path="home" element={<Home />} />
           <Route path="inventory" element={<Inventory />} />
+          <Route path="sales" element={<Sales />} />
+          <Route path="bill" element={<Bill />} />
+          <Route path="customers" element={<Customers />} />
+          <Route path="setting" element={<Setting />} />
         </Route>
       </Routes>
     </AuthProvider>
