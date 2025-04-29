@@ -15,7 +15,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
   const menuItems = [
     { name: "Home", icon: <HomeIcon size={20} />, path: "/home" },
-    { name: "Explore", icon: <CompassIcon size={20} />, path: "/explore" },
+    { name: "Inventory", icon: <CompassIcon size={20} />, path: "/inventory" },
     { name: "Subscriptions", icon: <VideoIcon size={20} />, path: "/subscriptions" },
     { name: "Watch Later", icon: <ClockIcon size={20} />, path: "/watch-later" },
     { name: "Liked Videos", icon: <ThumbsUpIcon size={20} />, path: "/liked" },
@@ -23,7 +23,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
   return (
     <div
-      className={` top-0 z-50 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 pt-16 
+      className={` top-0 z-50 h-screen bg-gradient-to-b from-black via-gray-800 to-gray-700 transition-all duration-300 pt-16 
       ${collapsed ? "w-16" : "w-56"} 
       ${isOpen ? "left-0" : "-left-full"} md:left-0`}
     >

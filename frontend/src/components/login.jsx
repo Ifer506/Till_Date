@@ -5,7 +5,7 @@ import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authServices";
 
-// import { useAuth } from "../utils/authContext";
+import { useAuth } from "../utils/authContext";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -20,7 +20,7 @@ const LoginPage = () => {
   });
   const navigate = useNavigate();
   // const dispatch = useDispatch()
-  // const auth = useAuth();
+  const auth = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +37,7 @@ const LoginPage = () => {
           email: email,
           password: password,
         };
-        // auth.setEmail(user.email);
+        auth.setEmail(user.email);
 
         // const response = await axios.post("/user/login", user);
         const response = await loginUser(user);

@@ -154,7 +154,7 @@ const Navbar = () => {
     //     </div>
     //   </div>
     // </nav>
-    <nav className="bg-gradient-to-br from-teal-950 to-slate-900">
+    <nav className=" bg-gradient-to-r from-black via-gray-900 to-gray-700">
       <div className="mx-auto flex items-center justify-between p-4">
         {/* Logo */}
         <Link to="/home">
@@ -201,7 +201,7 @@ const Navbar = () => {
         <div className="hidden md:flex relative" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full hover:text-blue-500 dark:hover:text-blue-400 md:me-0 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:text-white"
+            className="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full hover:text-blue-500 dark:hover:text-blue-400 md:me-0 focus:ring-0 focus:ring-gray-200 dark:focus:ring-gray-700 dark:text-white"
           >
             <img
               className="w-8 h-8 me-2 rounded-full border-2 border-white"
