@@ -5,13 +5,14 @@ import "./App.css";
 
 // Components
 import LoginPage from "./components/login";
-import Home from "./components/home";
+import Home from "./components/Home";
 import Inventory from "./components/inventory";
 import Sales from "./components/sales";
-import Setting from "./components/Setting";
+import Setting from "./components/setting";
 import Salary from "./components/Salary";
 import Bill from "./components/Bill";
 import Customers from "./components/Customers";
+import UserChanges from "./components/UserChanges";
 
 // Layout
 import AppLayout from "./layouts/AppLayout";
@@ -64,6 +65,7 @@ function App() {
           <Route path="bill" element={<Bill />} />
           <Route path="customers" element={<Customers />} />
           <Route path="setting" element={<Setting />} />
+          <Route path="userChanges" element={<UserChanges />} />
         </Route>
       </Routes>
     </AuthProvider>

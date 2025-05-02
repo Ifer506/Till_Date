@@ -5,8 +5,8 @@ const app = express();
 const path = require("path");
 const { pool } = require("../../db");
 
+const multer = require("multer");
 const profileImage = path.join(__dirname, "uploads", "png");
-
 
 // const signin = async (req,res) => {
 
@@ -134,13 +134,14 @@ const signin = async (req, res) => {
   }
 };
 
-const userDetail = async (req,res) => {
-  try{
+const userDetail = async (req, res) => {
+  try {
     const userId = req.params.id;
-    const result = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+    const result = await pool.query("SELECT * FROM users WHERE id = $1", [
+      userId,
+    ]);
     const user = result.rows[0];
 
-    
     if (!user) {
       return res
         .status(404)
@@ -148,10 +149,119 @@ const userDetail = async (req,res) => {
     }
 
     res.json({ success: true, data: user });
-  }catch(error){
+  } catch (error) {
     console.error(error);
-    res.status(500).json({success : false , message:"Internal error canst send user data"})
+    res
+      .status(500)
+      .json({ success: false, message: "Internal error canst send user data" });
   }
 };
 
-module.exports = { signup, signin , userDetail};
+const allUsers = async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM users ORDER BY id ASC"); // You can customize sorting
+    const users = result.rows;
+
+    if (users.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No users found" });
+    }
+
+    res.json({ success: true, data: users });
+  } catch (error) {
+    console.error("❌ Fetch all users error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error while retrieving users",
+    });
+  }
+};
+
+const userUpdate = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { email, password, fullName, phone } = req.body;
+    let profilePicPath = req.file ? req.file.path : null;
+
+    const existingUserRes = await pool.query(
+      "SELECT * FROM users WHERE id = $1",
+      [userId]
+    );
+    if (existingUserRes.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const existingUser = existingUserRes.rows[0];
+
+    // Prepare fields to update
+    const fields = [];
+    const values = [];
+    let index = 1;
+
+    if (email) {
+      fields.push(`email = $${index++}`);
+      values.push(email);
+    }
+
+    if (password) {
+      const saltRounds = 12;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      fields.push(`password = $${index++}`);
+      values.push(hashedPassword);
+    }
+
+    if (fullName) {
+      fields.push(`fullName = $${index++}`);
+      values.push(fullName);
+    }
+
+    if (phone) {
+      fields.push(`phone = $${index++}`);
+      values.push(phone);
+    }
+
+    if (profilePicPath) {
+      fields.push(`profile_picture = $${index++}`);
+      values.push(profilePicPath);
+    }
+
+    if (fields.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No fields provided to update" });
+    }
+
+    const updateQuery = `
+      UPDATE users SET ${fields.join(", ")}
+      WHERE id = $${index}
+      RETURNING *;
+    `;
+    values.push(userId);
+
+    const result = await pool.query(updateQuery, values);
+
+    res.json({ success: true, message: "User updated", user: result.rows[0] });
+  } catch (err) {
+    console.error("❌ User update error:", err.message);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", error: err.message });
+  }
+};
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "../../uploads/userProfile"));  // Make sure this folder exists
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage });
+
+module.exports = { signup, signin, userDetail, userUpdate, upload };

@@ -39,5 +39,7 @@ app.listen(PORT, () => {
 const authRoutes = require("./src/routes/authRoutes");
 
 app.use("/user", authRoutes);
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 module.exports = app;

@@ -3,7 +3,7 @@ import React from 'react'
 const Customers = () => {
   return (
     <div>
-      Customer
+      Customer bhai ye user changes nahi he
     </div>
   )
 }

@@ -18,3 +18,7 @@ export const loginUser = async (loginData) => {
 export const userDetail = async (id) => {
   return API.get(`/user/profile/${id}`,id);
 };
+
+export const userChange = async (id) => {
+  return API.put(`/user/profile/${id}`,id);
+};
