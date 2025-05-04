@@ -19,6 +19,15 @@ export const userDetail = async (id) => {
   return API.get(`/user/profile/${id}`,id);
 };
 
-export const userChange = async (id) => {
-  return API.put(`/user/profile/${id}`,id);
+export const userChange = async (id, formData) => {
+  return API.put(`/user/profile/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+
+export const allprofile = async () => {
+  return API.get("/user/allprofile");
 };

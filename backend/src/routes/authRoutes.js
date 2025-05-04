@@ -12,8 +12,9 @@ router.get("/", (req, res) => {
 router.post("/register", authController.signup);
 router.post("/login", authController.signin)
 router.get("/profile/:id",authController.userDetail);
+router.get("/allprofile",authController.allUsers);
 
-router.put('/profile/:id', authController.upload.single('profile_picture'), authController.userUpdate);
+router.put('/profile/:id', authController.upload.single("profile_picture"), authController.userUpdate);
 
 
 module.exports = router;

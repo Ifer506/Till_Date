@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const app = express();
 const path = require("path");
 const { pool } = require("../../db");
+const fs = require("fs");
+
 
 const multer = require("multer");
 const profileImage = path.join(__dirname, "uploads", "png");
@@ -254,7 +256,14 @@ const userUpdate = async (req, res) => {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../../uploads/userProfile"));  // Make sure this folder exists
+    const dir = path.join(__dirname, "../uploads/userProfile");
+
+    // Auto-create the folder if it doesn't exist
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    cb(null, dir);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -264,4 +273,4 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-module.exports = { signup, signin, userDetail, userUpdate, upload };
+module.exports = { signup, signin, userDetail, userUpdate, upload, allUsers };

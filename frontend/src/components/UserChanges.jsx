@@ -1,49 +1,20 @@
-import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
-
-import { userDetail } from "../services/authServices"; // adjust path as needed
+import { jwtDecode } from "jwt-decode";
+import { userDetail, userChange } from "../services/authServices";
 
 const UserChanges = () => {
   const accessToken = localStorage.getItem("token");
-  const [user, setUser] = useState(null);
   const userId = jwtDecode(accessToken).id;
 
-  const editUser = async () => {
-    
-    if (!accessToken) {
-      console.error("User not authenticated.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("fullName", fullName);
-    formData.append("phoneNumber", num);
-    formData.append("cv", cvFile);
-    formData.append("profile", profile);
-
-    const headers = {
-      Authorization: `${accessToken}`,
-      "Content-Type": "multipart/form-data",
-    };
-    try {
-      const response = await axios.post("/users/editProfile", formData, {
-        headers,
-      });
-      if (response.status === 200) {
-        message.success(response.data.message);
-      } else {
-        message.error(response.data.message);
-      }
-    } catch (error) {
-      message.error(error.message);
-    }
-  };
+  const [user, setUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await userDetail(userId);
-        setUser(response.data.data); // Assuming response is { data: { data: userObject } }
+        setUser(response.data.data);
       } catch (error) {
         console.error("Failed to fetch user details:", error.message);
       }
@@ -52,44 +23,85 @@ const UserChanges = () => {
     fetchUser();
   }, [userId]);
 
+  const handleImageClick = () => {
+    setShowModal(true);
+  };
+
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+  const handleImageSubmit = async () => {
+    if (!selectedFile) return;
+
+    const formData = new FormData();
+    formData.append("profile_picture", selectedFile);
+
+    try {
+      await userChange(userId, formData);
+      setShowModal(false);
+      // Refresh profile after update
+      const updated = await userDetail(userId);
+      setUser(updated.data.data);
+    } catch (error) {
+      console.error("Failed to update profile picture:", error.message);
+    }
+  };
+
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">User Profile</h2>
+    <div className="p-6 max-w-xl ">
+      <h2 className="text-3xl font-semibold mb-6 text-left text-gray-800">
+        Your Profile
+      </h2>
+
       {user ? (
-        <table className="min-w-full border border-gray-300">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border px-4 py-2">Profile Picture</th>
-              <th className="border px-4 py-2">Email</th>
-              <th className="border px-4 py-2">Full Name</th>
-              <th className="border px-4 py-2">Phone</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="text-center">
-              <td className="border px-4 py-2">
-                {user.profile_picture ? (
-                  <img
-                    src={`/${user.profile_picture}`}
-                    alt="Profile"
-                    className="w-10 h-10 rounded-full"
-                  />
-                ) : (
-                  "No image"
-                )}
-              </td>
-              <td className="border px-4 py-2">{user.email}</td>
-              <td className="border px-4 py-2">{user.fullname}</td>
-              <td className="border px-4 py-2">{user.phone}</td>
-              <td className="border px-4 py-2" >
-                
-              </td>
-              
-            </tr>
-          </tbody>
-        </table>
+        <div className="bg-white shadow-lg rounded-xl p-6 flex items-center">
+          <div className="relative p-8">
+            <img
+              src={user.profile_picture ? `/${user.profile_picture}` : "/default.png"}
+              alt="Profile"
+              className="w-50 h-50 rounded-full object-cover border-2 border-emerald-500 cursor-pointer"
+              onClick={handleImageClick}
+            />
+            <p className="text-sm text-gray-500 mt-2">Click to change photo</p>
+          </div>
+          <div className="mt-6 space-y-2 text-gray-700">
+            <p><strong>Email:</strong> {user.email}</p>
+            <p><strong>Full Name:</strong> {user.fullname}</p>
+            <p><strong>Phone:</strong> {user.phone}</p>
+          </div>
+        </div>
       ) : (
         <p>Loading user data...</p>
+      )}
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-80 text-center">
+            <h3 className="text-lg font-semibold mb-4">Change Profile Picture</h3>
+            <input
+              type="file"
+              onChange={handleFileChange}
+              className="mb-4"
+              accept="image/*"
+            />
+            <div className="flex justify-between">
+              <button
+                className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
+                onClick={handleImageSubmit}
+              >
+                Yes
+              </button>
+              <button
+                className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
+                onClick={() => setShowModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

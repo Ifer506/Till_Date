@@ -13,6 +13,7 @@ import Salary from "./components/Salary";
 import Bill from "./components/Bill";
 import Customers from "./components/Customers";
 import UserChanges from "./components/UserChanges";
+import AllUsers from "./components/AllUsers";
 
 // Layout
 import AppLayout from "./layouts/AppLayout";
@@ -66,6 +67,7 @@ function App() {
           <Route path="customers" element={<Customers />} />
           <Route path="setting" element={<Setting />} />
           <Route path="userChanges" element={<UserChanges />} />
+          <Route path="allprofile" element={<AllUsers />} />
         </Route>
       </Routes>
     </AuthProvider>
