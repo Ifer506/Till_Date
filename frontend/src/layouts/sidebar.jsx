@@ -30,7 +30,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
   return (
     <div
-      className={` top-0 z-50 h-screen bg-gradient-to-b from-black via-gray-800 to-gray-700 transition-all duration-300 pt-16 
+      className={` top-0 z-50  min-h-screen bg-gradient-to-b from-black via-gray-800 to-gray-700 transition-all duration-300 pt-16 
       ${collapsed ? "w-16" : "w-56"} 
       ${isOpen ? "left-0" : "-left-full"} md:left-0`}
     >

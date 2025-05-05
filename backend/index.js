@@ -6,6 +6,9 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 const cors = require("cors");
 
+
+
+
 //configuring dotenv , where all secrets passthrough
 dotenv.config();
 
@@ -36,10 +39,26 @@ app.listen(PORT, () => {
 
 // this is the path files that are required for the api to connect
 // const authController = require("./src/controller/authController");
+
+
+app.use("/uploads", express.static(path.join(__dirname, "src/uploads")));
+
+
 const authRoutes = require("./src/routes/authRoutes");
 
 app.use("/user", authRoutes);
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 
 module.exports = app;
+
+
+//this is just for testing the image path
+// const fs = require("fs");
+
+// app.get("/test-image", (req, res) => {
+//   const imgPath = path.join(__dirname, "src/uploads", "fire.jpeg");
+//   if (fs.existsSync(imgPath)) {
+//     res.sendFile(imgPath);
+//   } else {
+//     res.status(404).send("Image not found");
+//   }
+// });

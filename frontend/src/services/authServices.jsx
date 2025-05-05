@@ -15,10 +15,12 @@ export const loginUser = async (loginData) => {
   return API.post("/user/login", loginData);
 };
 
+//get users details
 export const userDetail = async (id) => {
-  return API.get(`/user/profile/${id}`,id);
+  return API.get(`/user/profile/${id}`, id);
 };
 
+//save changes done to the users profile
 export const userChange = async (id, formData) => {
   return API.put(`/user/profile/${id}`, formData, {
     headers: {
@@ -27,6 +29,14 @@ export const userChange = async (id, formData) => {
   });
 };
 
+//get image of the user and upload it
+export const profileImg = async () => {
+  return API.get(`/uploads/userProfile/${user.profilepic}`);
+};
+
+// export const getPicByID = async () => {
+//   return API.get(`/uploads/userProfile/${user.profile_picture}`)
+// }
 
 export const allprofile = async () => {
   return API.get("/user/allprofile");

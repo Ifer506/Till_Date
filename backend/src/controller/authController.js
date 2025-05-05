@@ -6,7 +6,6 @@ const path = require("path");
 const { pool } = require("../../db");
 const fs = require("fs");
 
-
 const multer = require("multer");
 const profileImage = path.join(__dirname, "uploads", "png");
 
@@ -62,25 +61,40 @@ const profileImage = path.join(__dirname, "uploads", "png");
 
 const signup = async (req, res) => {
   try {
-    const { id, email, password, fullName, phone } = req.body;
+    const { email, password, fullName, phone, profilePic, bio } = req.body;
 
-    if (!id || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
+
+    // Check if the email already exists
+    const checkEmailQuery = "SELECT id FROM users WHERE email = $1";
+    const emailResult = await pool.query(checkEmailQuery, [email]);
+
+    if (emailResult.rows.length > 0) {
+      return res.status(409).json({ message: "Email already in use" });
+    }
+
+    // Hash the password
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    const insert_query = `INSERT INTO users (id, email, password,fullName,phone)
-      VALUES ($1, $2, $3, $4, $5)
+    // Insert the user
+    const insertQuery = `
+      INSERT INTO users (email, password, fullname, phone, profilepic, bio)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *;
     `;
 
-    const result = await pool.query(insert_query, [
-      id,
+    const result = await pool.query(insertQuery, [
       email,
       hashedPassword,
       fullName,
       phone,
+      profilePic,
+      bio,
     ]);
 
     console.log("✅ User inserted:", result.rows[0]);
@@ -150,6 +164,8 @@ const userDetail = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
+    
+
     res.json({ success: true, data: user });
   } catch (error) {
     console.error(error);
@@ -183,8 +199,10 @@ const allUsers = async (req, res) => {
 const userUpdate = async (req, res) => {
   try {
     const userId = req.params.id;
-    const { email, password, fullName, phone } = req.body;
-    let profilePicPath = req.file ? req.file.path : null;
+    const { email, password, fullName, phone, bio } = req.body;
+    let profilePicPath = req.file
+      ? `uploads/userProfile/${req.file.filename}`
+      : null;
 
     const existingUserRes = await pool.query(
       "SELECT * FROM users WHERE id = $1",
@@ -226,8 +244,13 @@ const userUpdate = async (req, res) => {
     }
 
     if (profilePicPath) {
-      fields.push(`profile_picture = $${index++}`);
+      fields.push(`profilepic = $${index++}`);
       values.push(profilePicPath);
+    }
+
+    if (bio) {
+      fields.push(`bio = $${index++}`);
+      values.push(bio);
     }
 
     if (fields.length === 0) {
@@ -245,7 +268,11 @@ const userUpdate = async (req, res) => {
 
     const result = await pool.query(updateQuery, values);
 
-    res.json({ success: true, message: "User updated", user: result.rows[0] });
+    res.json({
+      success: true,
+      message: "User updated",
+      user: result.rows[0], // Now the user will have the relative path in profile_picture
+    });
   } catch (err) {
     console.error("❌ User update error:", err.message);
     res
@@ -273,4 +300,72 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-module.exports = { signup, signin, userDetail, userUpdate, upload, allUsers };
+// const getImage = async (req,res) => {
+
+//   try {
+//     const imageName = req.params.imageName;
+
+//     // Construct the path to the images folder inside the current working directory
+//     const logosFolderPath = path.join(__dirname, "uploads", "logos");
+//     const imagesFolderPath = path.join(__dirname, "uploads", "userData");
+
+//     const logoImagePath = path.join(logosFolderPath, imageName);
+//     const generalImagePath = path.join(imagesFolderPath, imageName);
+
+//     // Check if the image exists in "uploads/logos"
+//     if (fs.existsSync(logoImagePath)) {
+//       // Send the image file as a response
+//       res.sendFile(logoImagePath);
+//     }
+//     // Check if the image exists in "uploads"
+//     else if (fs.existsSync(generalImagePath)) {
+//       // Send the image file as a response
+//       res.sendFile(generalImagePath);
+//     } else {
+//       // If the image does not exist, return a 404 error
+//       res.status(404).json({ error: "Image not found" });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+
+// }
+
+const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // First, find the user to ensure they exist
+    const userResult = await pool.query("SELECT * FROM users WHERE id = $1", [
+      userId,
+    ]);
+
+    const user = userResult.rows[0];
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Now, delete the user from the database
+    await pool.query("DELETE FROM users WHERE id = $1", [userId]);
+
+    // Return success response
+    res.json({ success: true, message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports = {
+  signup,
+  signin,
+  userDetail,
+  userUpdate,
+  allUsers,
+  deleteUser,
+  upload
+};
