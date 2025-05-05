@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
-import { userChange, userDetail } from "../services/authServices";
+import { userChange, userDetail ,profileImg} from "../services/authServices";
 
 const UserChanges = () => {
   const accessToken = localStorage.getItem("token");
@@ -94,7 +94,7 @@ const UserChanges = () => {
               className="relative group cursor-pointer"
             >
               <img
-                src={user.profilepic}
+                src={`http://localhost:3000/${user.profilepic}`}
                 //only for testing the image pathing is correct
                 // src='http://localhost:3000/uploads/userProfile/1746444587675-230143538.png'
                 name="profilepic"

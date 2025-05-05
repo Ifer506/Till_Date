@@ -1,8 +1,9 @@
 import axios from "axios";
+import { BACKEND_BASE_URL } from "../config";
 
 // Your backend base URL
 const API = axios.create({
-  baseURL: "http://localhost:3000/", // Adjust this port if your backend runs on a different one
+  baseURL: BACKEND_BASE_URL, // Adjust this port if your backend runs on a different one
 });
 
 // Signup API
@@ -31,7 +32,7 @@ export const userChange = async (id, formData) => {
 
 //get image of the user and upload it
 export const profileImg = async () => {
-  return API.get(`/uploads/userProfile/${user.profilepic}`);
+  return API.get(`http://localhost:3000/uploads/userProfile/${user.profilepic}`);
 };
 
 // export const getPicByID = async () => {

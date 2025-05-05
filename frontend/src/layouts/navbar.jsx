@@ -3,7 +3,10 @@ import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/till_date_circle.png";
-import { userDetail } from "../services/authServices";
+import { userDetail ,profileImg} from "../services/authServices";
+import { BACKEND_BASE_URL } from "../config";
+
+
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -11,6 +14,8 @@ const Navbar = () => {
   // const [profileImage, setProfileImage] = useState("");
   const [email, setEmail] = useState("");
   const [fullName, setFullname] = useState("");
+  const [profilepic, setProfileimg] = useState("");
+
 
   const logOut = async () => {
     try {
@@ -48,6 +53,7 @@ const Navbar = () => {
         // setProfileImage(response.data.data.profile);
         setEmail(response.data.data.email);
         setFullname(response.data.data.fullname);
+        setProfileimg(response.data.data.profilepic)
         // console.log(response.data);
       } else {
         message.error(response.data.message);
@@ -206,7 +212,12 @@ const Navbar = () => {
             <img
               className="w-8 h-8 me-2 rounded-full border-2 border-white"
               alt="user"
-              src="https://i.pravatar.cc/300"
+              src={
+                profilepic
+                  ? `${BACKEND_BASE_URL}/${profilepic}`
+                  : "https://i.pravatar.cc/300"
+              }
+              
             />
             {fullName}
           </button>
