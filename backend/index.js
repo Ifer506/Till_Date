@@ -45,8 +45,10 @@ app.use("/uploads", express.static(path.join(__dirname, "src/uploads")));
 
 
 const authRoutes = require("./src/routes/authRoutes");
+const productRoute = require("./src/routes/productRoutes");
 
 app.use("/user", authRoutes);
+app.use("/product", productRoute);
 
 module.exports = app;
 

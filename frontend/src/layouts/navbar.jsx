@@ -3,10 +3,8 @@ import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/till_date_circle.png";
-import { userDetail ,profileImg} from "../services/authServices";
 import { BACKEND_BASE_URL } from "../config";
-
-
+import { userDetail } from "../services/authServices";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -15,7 +13,6 @@ const Navbar = () => {
   const [email, setEmail] = useState("");
   const [fullName, setFullname] = useState("");
   const [profilepic, setProfileimg] = useState("");
-
 
   const logOut = async () => {
     try {
@@ -53,7 +50,7 @@ const Navbar = () => {
         // setProfileImage(response.data.data.profile);
         setEmail(response.data.data.email);
         setFullname(response.data.data.fullname);
-        setProfileimg(response.data.data.profilepic)
+        setProfileimg(response.data.data.profilepic);
         // console.log(response.data);
       } else {
         message.error(response.data.message);
@@ -207,18 +204,42 @@ const Navbar = () => {
         <div className="hidden md:flex relative" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full hover:text-blue-500 dark:hover:text-blue-400 md:me-0 focus:ring-0 focus:ring-gray-200 dark:focus:ring-gray-700 dark:text-white"
+            className="object-cover flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full hover:text-blue-500 dark:hover:text-blue-400 md:me-0 focus:ring-0 focus:ring-gray-200 dark:focus:ring-gray-700 dark:text-white"
           >
-            <img
-              className="w-8 h-8 me-2 rounded-full border-2 border-white"
+            {/* // this works fine but the image looks distorted  */}
+            {/* <img
+              className="w-8 h-8 me-2 rounded-full border-2 border-white object-cover"
               alt="user"
               src={
                 profilepic
                   ? `${BACKEND_BASE_URL}/${profilepic}`
                   : "https://i.pravatar.cc/300"
               }
-              
+            /> */}
+
+            {/* incase your woundering this is to load quickly , its called lazy load */}
+            <img
+              className="w-10 h-10 me-2 rounded-3xl  object-cover"
+              src={
+                profilepic
+                  ? `${BACKEND_BASE_URL}/${profilepic}`
+                  : "https://i.pravatar.cc/300"
+              }
+              alt={`${fullName}'s profile picture`}
+              loading="lazy"
             />
+
+            {/* <img
+              className="w-10 h-10 me-3 rounded-full  object-cover"
+              style={{ imageRendering: "auto" }}
+              alt="user"
+              src={
+                profilepic
+                  ? `${BACKEND_BASE_URL}/${profilepic}`
+                  : "https://i.pravatar.cc/300"
+              }
+            /> */}
+
             {fullName}
           </button>
           <AnimatePresence>

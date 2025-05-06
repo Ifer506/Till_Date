@@ -1,12 +1,16 @@
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
-import { userChange, userDetail ,profileImg} from "../services/authServices";
+import { toast } from "react-hot-toast";
+import { BACKEND_BASE_URL } from "../config";
+import { userChange, userDetail } from "../services/authServices";
 
 const UserChanges = () => {
   const accessToken = localStorage.getItem("token");
   const userId = jwtDecode(accessToken).id;
-
+  const [previewChanged, setPreviewChanged] = useState(false);
   const [user, setUser] = useState(null);
+  const [previewURL, setPreviewURL] = useState(null);
+
   const [formData, setFormData] = useState({
     fullname: "",
     phone: "",
@@ -15,6 +19,41 @@ const UserChanges = () => {
     bio: "",
   });
   const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    console.log("i have the file now");
+    if (!file) return;
+
+    // apparently the URL.createObjectURL() help to show a local preview of the file before upload
+    const newPreviewURL = URL.createObjectURL(file);
+    // const previewURL = URL.createObjectURL(file);
+
+    //this shows that the file is loaded in the setSelectedfile
+    setSelectedFile(file);
+    setPreviewChanged(true); // boolean to show that the preview has changed
+
+
+    //just to check is the temporary url worked and the image was stored temporarily
+    // console.log("Preview URL: ", newPreviewURL);
+
+    setUser((prevUser) => ({
+      ...prevUser,
+      profilepic: newPreviewURL,
+    }));
+
+    // Revoke the previous preview URL if there is one
+    if (previewURL) {
+      URL.revokeObjectURL(previewURL);
+    }
+
+    setPreviewURL(newPreviewURL);
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -33,18 +72,14 @@ const UserChanges = () => {
         console.error("Failed to fetch user details:", error.message);
       }
     };
-
     fetchUser();
-  }, [userId]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-  };
+    return () => {
+      if (previewURL) {
+        URL.revokeObjectURL(previewURL);
+      }
+    };
+  }, [userId, previewURL]);
 
   const handleImageSubmit = async () => {
     if (!selectedFile) return;
@@ -74,9 +109,10 @@ const UserChanges = () => {
 
       const updated = await userDetail(userId);
       setUser(updated.data.data);
-      alert("Profile updated successfully!");
+      setPreviewChanged(false);
+      toast.success("Profile updated successfully!");
     } catch (error) {
-      console.error("Failed to update profile:", error.message);
+      toast.error("Failed to update profile:", error.message);
     }
   };
 
@@ -93,19 +129,34 @@ const UserChanges = () => {
               htmlFor="profile-pic-upload"
               className="relative group cursor-pointer"
             >
-              <img
-                src={`http://localhost:3000/${user.profilepic}`}
+              {/* <img
+                src={`${BACKEND_BASE_URL}/${user.profilepic}`}
                 //only for testing the image pathing is correct
                 // src='http://localhost:3000/uploads/userProfile/1746444587675-230143538.png'
                 name="profilepic"
                 alt="Profile"
-                className="w-32 h-32 rounded-full shadow-md object-cover"
+                className="w-50 h-50 rounded-full shadow-md object-cover"
+              /> */}
+              {/* <img
+                src={
+                  user.profilepic?.startsWith("blob:")
+                    ? user.profilepic
+                    : `${BACKEND_BASE_URL}/${user.profilepic}`
+                }
+                alt="Profile"
+                className="w-50 h-50 rounded-full shadow-md object-cover"
+              /> */}
+
+              <img
+                src={previewURL || `${BACKEND_BASE_URL}/${user.profilepic}`}
+                alt="Profile"
+                className="w-50 h-50 rounded-full shadow-md object-cover"
               />
 
               {/* Edit Icon Overlay */}
               <div className="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns=""
                   className="h-6 w-6 text-white"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -120,6 +171,11 @@ const UserChanges = () => {
                 </svg>
               </div>
             </label>
+            {previewChanged && (
+              <span className="text-sm text-yellow-600 mt-2">
+                Image not saved yet
+              </span>
+            )}
 
             <input
               id="profile-pic-upload"
@@ -130,7 +186,8 @@ const UserChanges = () => {
             />
           </div>
 
-          <div className="flex flex-col md:flex-row items-center gap-3 mt-4">
+            {/* the below code is no longer needed as the images are previewed and we can see the actual image or manually pressing the button */}
+          {/* <div className="flex flex-col md:flex-row items-center gap-3 mt-4">
             <button
               onClick={handleImageSubmit}
               className="bg-blue-900 hover:bg-indigo-900 text-white px-4 py-2 rounded-lg font-medium"
@@ -140,7 +197,7 @@ const UserChanges = () => {
             <button className="border border-[#2d2d65] text-[#2d2d65] px-4 py-2 rounded-lg font-medium hover:bg-gray-100">
               Delete picture
             </button>
-          </div>
+          </div> */}
         </div>
 
         <form className="space-y-5" onSubmit={handleSubmit}>

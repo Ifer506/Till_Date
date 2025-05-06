@@ -6,14 +6,17 @@ import "./App.css";
 // Components
 import LoginPage from "./components/Login";
 import Home from "./components/Home";
-import Inventory from "./components/inventory";
-import Sales from "./components/sales";
-import Setting from "./components/setting";
+import Inventory from "./components/Inventory";
+import Sales from "./components/Sales";
+import Setting from "./components/Setting";
 import Salary from "./components/Salary";
 import Bill from "./components/Bill";
 import Customers from "./components/Customers";
 import UserChanges from "./components/UserChanges";
 import AllUsers from "./components/AllUsers";
+import AddProduct from "./components/AddProduct";
+import AllProducts from "./components/AllProducts";
+
 
 // Layout
 import AppLayout from "./layouts/AppLayout";
@@ -68,6 +71,9 @@ function App() {
           <Route path="setting" element={<Setting />} />
           <Route path="userChanges" element={<UserChanges />} />
           <Route path="allprofile" element={<AllUsers />} />
+          <Route path="addProducts" element={<AddProduct />} />
+          <Route path="allProducts" element={<AllProducts />} />
+
         </Route>
       </Routes>
     </AuthProvider>

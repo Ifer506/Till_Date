@@ -1,5 +1,5 @@
-import { Pencil } from "lucide-react"; // ✅ install lucide-react: npm i lucide-react
 import React, { useEffect, useState } from "react";
+import { BACKEND_BASE_URL } from "../config";
 import { allprofile } from "../services/authServices";
 
 const AllUsers = () => {
@@ -18,10 +18,6 @@ const AllUsers = () => {
     fetchUser();
   }, []);
 
-  const handleEdit = (user) => {
-    console.log("Edit user:", user);
-  };
-
   return (
     <div className="p-6">
       <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">
@@ -32,12 +28,12 @@ const AllUsers = () => {
         <table className="min-w-full text-sm text-left text-gray-700 bg-white">
           <thead className="bg-emerald-600 text-white">
             <tr>
-              <th className="px-6 py-4">ID</th>
+              {/* <th className="px-6 py-4">ID</th> */}
               <th className="px-6 py-4">Profile</th>
               <th className="px-6 py-4">Email</th>
               <th className="px-6 py-4">Full Name</th>
               <th className="px-6 py-4">Phone</th>
-              <th className="px-6 py-4">Edit</th> {/* 👈 New Column */}
+              <th className="px-6 py-4">Info</th> {/* 👈 New Column */}
             </tr>
           </thead>
           <tbody>
@@ -48,32 +44,24 @@ const AllUsers = () => {
                   idx % 2 === 0 ? "bg-gray-50" : "bg-white"
                 }`}
               >
-                <td className="px-6 py-4 font-medium text-gray-900">
+                {/* <td className="px-6 py-4 font-medium text-gray-900">
                   {user.id}
-                </td>
-                <td className="px-6 py-4 flex items-center gap-2">
-                  {user.profile_picture ? (
+                </td> */}
+                <td className="px-4 py-2 flex items-center gap-1">
+                  {user.profilepic ? (
                     <img
-                      src={`/${user.profile_picture}`}
+                      src={`${BACKEND_BASE_URL}/${user.profilepic}`}
                       alt="Profile"
-                      className="w-12 h-12 rounded-full object-cover"
+                      className="w-20 h-20 rounded-2xl object-cover"
                     />
                   ) : (
-                    <span className="text-gray-500 italic">No image</span>
+                    <span className="text-gray-500 italic ">No image</span>
                   )}
                 </td>
-                <td className="px-6 py-4">{user.email}</td>
-                <td className="px-6 py-4">{user.fullname}</td>
-                <td className="px-6 py-4">{user.phone}</td>
-                <td className="px-6 py-4 text-center">
-                  <button
-                    onClick={() => handleEdit(user)}
-                    className="text-emerald-600 hover:text-emerald-800 transition"
-                    title="Edit User"
-                  >
-                    <Pencil size={18} />
-                  </button>
-                </td>
+                <td className="px-3 py-4 text-xl">{user.fullname}</td>
+                <td className="px-3 py-4 text-xl ">{user.email}</td>
+                <td className="px-3 py-4 text-xl ">{user.phone}</td>
+                <td className="px-3 py-4 text-xl ">{user.bio}</td>
               </tr>
             ))}
           </tbody>
