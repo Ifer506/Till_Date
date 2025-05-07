@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import logo from "../assets/till_date_circle.png";
+import logo from "../../assets/till_date_circle.png";
 // import { Toaster, toast } from 'sooner';
 import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../services/authServices";
+import { loginUser } from "../../services/authServices";
 
-import { useAuth } from "../utils/authContext";
+import { useAuth } from "../../utils/authContext";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");

@@ -4,18 +4,18 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 
 // Components
-import LoginPage from "./components/Login";
 import Home from "./components/Home";
-import Inventory from "./components/Inventory";
-import Sales from "./components/Sales";
-import Setting from "./components/Setting";
-import Salary from "./components/Salary";
-import Bill from "./components/Bill";
-import Customers from "./components/Customers";
-import UserChanges from "./components/UserChanges";
-import AllUsers from "./components/AllUsers";
-import AddProduct from "./components/AddProduct";
-import AllProducts from "./components/AllProducts";
+import LoginPage from "./components/users/Login";
+import UserChanges from "./components/users/UserChanges";
+import AllUsers from "./components/users/AllUsers";
+import Setting from "./components/users/Setting";
+import Inventory from "./components/inventory/Inventory";
+import AddProduct from "./components/inventory/AddProduct";
+import AllProducts from "./components/inventory/AllProducts";
+import Sales from "./components/sales/Sales";
+import Salary from "./components/salary/Salary";
+import Bill from "./components/bill/Bill";
+import Customers from "./components/customers/Customers";
 
 
 // Layout

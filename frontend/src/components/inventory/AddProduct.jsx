@@ -2,7 +2,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import * as Yup from "yup";
-import { addProduct } from "../routes/productRoutes";
+import { addProduct } from "../../routes/productRoutes";
 
 const AddProduct = () => {
   const [initialValues, setInitialValues] = useState({
@@ -45,22 +45,23 @@ const AddProduct = () => {
   const handleSubmit = async (values, { resetForm }) => {
     try {
       const formData = new FormData();
-      
+
       // Append the text fields
       Object.entries(values).forEach(([key, value]) => {
-        if (key !== 'itemImage' && value !== null) { // Skip 'itemImage' for now
+        if (key !== "itemImage" && value !== null) {
+          // Skip 'itemImage' for now
           formData.append(key, value);
         }
       });
-  
+
       // Append the file
       if (values.itemImage) {
-        formData.append('itemImage', values.itemImage);
+        formData.append("itemImage", values.itemImage);
       }
-  
+
       // Send the request with form data
       const res = await addProduct(formData);
-  
+
       toast.success("Product added successfully!");
       resetForm();
     } catch (error) {
@@ -68,7 +69,6 @@ const AddProduct = () => {
       toast.error("Failed to add product.");
     }
   };
-  
 
   return (
     <div className="bg-white text-gray-900 flex justify-center py-10">
@@ -168,5 +168,3 @@ const AddProduct = () => {
 };
 
 export default AddProduct;
-
-

@@ -1,8 +1,8 @@
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { BACKEND_BASE_URL } from "../config";
-import { userChange, userDetail } from "../services/authServices";
+import { BACKEND_BASE_URL } from "../../config";
+import { userChange, userDetail } from "../../services/authServices";
 
 const UserChanges = () => {
   const accessToken = localStorage.getItem("token");
@@ -37,7 +37,6 @@ const UserChanges = () => {
     //this shows that the file is loaded in the setSelectedfile
     setSelectedFile(file);
     setPreviewChanged(true); // boolean to show that the preview has changed
-
 
     //just to check is the temporary url worked and the image was stored temporarily
     // console.log("Preview URL: ", newPreviewURL);
@@ -186,7 +185,7 @@ const UserChanges = () => {
             />
           </div>
 
-            {/* the below code is no longer needed as the images are previewed and we can see the actual image or manually pressing the button */}
+          {/* the below code is no longer needed as the images are previewed and we can see the actual image or manually pressing the button */}
           {/* <div className="flex flex-col md:flex-row items-center gap-3 mt-4">
             <button
               onClick={handleImageSubmit}

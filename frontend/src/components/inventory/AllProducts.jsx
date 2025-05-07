@@ -1,29 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { BACKEND_BASE_URL } from "../config";
-import { allprofile } from "../services/authServices";
+import { allProduct } from "../../routes/productRoutes";
 
-const AllUsers = () => {
-  const [users, setUsers] = useState([]);
+const AllProducts = () => {
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchItems = async () => {
       try {
-        const response = await allprofile();
-        setUsers(response.data.data);
+        const response = await allProduct();
+        setItems(response.data.data);
       } catch (error) {
-        console.error("Failed to fetch users details:", error.message);
+        console.error("There's an error while pulling data from product API");
       }
     };
-
-    fetchUser();
+    fetchItems();
   }, []);
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg p-6">
-      <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">
-        Users Profile
-      </h2>
-
       <div className="flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
         <div>
           <button
@@ -32,7 +26,7 @@ const AllUsers = () => {
             className="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
             type="button"
           >
-            Filter
+            Last 30 days
             <svg
               className="w-2.5 h-2.5 ml-2.5"
               fill="none"
@@ -49,13 +43,12 @@ const AllUsers = () => {
             </svg>
           </button>
         </div>
-
         <div className="relative">
           <input
             type="text"
             id="table-search"
             className="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Search for users"
+            placeholder="Search for items"
           />
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <svg
@@ -76,24 +69,33 @@ const AllUsers = () => {
       <table className="w-full text-sm text-left text-gray-500">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50">
           <tr>
-            <th className="p-4">
+            <th scope="col" className="p-4">
               <input
                 type="checkbox"
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               />
             </th>
-            <th className="px-6 py-3">Profile</th>
-            <th className="px-6 py-3">Full Name</th>
-            <th className="px-6 py-3">Email</th>
-            <th className="px-6 py-3">Phone</th>
-            <th className="px-6 py-3">Info</th>
-            <th className="px-6 py-3">Action</th>
+            <th scope="col" className="px-6 py-3">
+              Product name
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Description
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Quantity
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Category
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Action
+            </th>
           </tr>
         </thead>
         <tbody>
-          {users.map((user, idx) => (
+          {items.map((item, idx) => (
             <tr
-              key={user.id}
+              key={item.item_id}
               className="bg-white border-b hover:bg-gray-50"
             >
               <td className="p-4">
@@ -102,23 +104,15 @@ const AllUsers = () => {
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
               </td>
-              <td className="px-6 py-4">
-                {user.profilepic ? (
-                  <img
-                    src={`${BACKEND_BASE_URL}/${user.profilepic}`}
-                    alt="Profile"
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="text-gray-500 italic">No image</span>
-                )}
-              </td>
-              <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                {user.fullname}
-              </td>
-              <td className="px-6 py-4">{user.email}</td>
-              <td className="px-6 py-4">{user.phone}</td>
-              <td className="px-6 py-4">{user.bio || "N/A"}</td>
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+              >
+                {item.item_name}
+              </th>
+              <td className="px-6 py-4">{item.item_desc}</td>
+              <td className="px-6 py-4">{item.quantity}</td>
+              <td className="px-6 py-4">{item.category || "N/A"}</td>
               <td className="px-6 py-4">
                 <a
                   href="#"
@@ -135,4 +129,4 @@ const AllUsers = () => {
   );
 };
 
-export default AllUsers;
+export default AllProducts;
