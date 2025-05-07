@@ -6,8 +6,6 @@ const path = require("path");
 const { pool } = require("../../db");
 
 const addProduct = async (req, res) => {
-  console.log("File received:", req.file); // <---- Log this
-  console.log("Form fields:", req.body);
   try {
     const {
       itemId,
@@ -18,6 +16,7 @@ const addProduct = async (req, res) => {
       weight,
       purchasePrice,
       sellingPrice,
+
       supplierId,
       taxRate,
       discontInfo,
@@ -36,6 +35,7 @@ const addProduct = async (req, res) => {
       weight,
       purchasePrice,
       sellingPrice,
+
       supplierId,
       taxRate,
       discontInfo,
@@ -47,10 +47,11 @@ const addProduct = async (req, res) => {
 
     if (!itemName) {
       return res.status(400).json({ message: "item names are required" });
-      
     }
 
-    const itemImage = req.file ? req.file.path : null;
+    const itemImage = req.file
+      ? `/uploads/itemsImage/${req.file.filename}`
+      : null;
 
     const query = `
       INSERT INTO products (
@@ -94,10 +95,6 @@ const addProduct = async (req, res) => {
       createdDate,
       updatedDate,
     ];
-
-    console.log("File received number 2:", req.file); // <---- Log this
-    console.log("Form fields number 2:", req.body);
-
     const result = await pool.query(query, values);
     res
       .status(201)

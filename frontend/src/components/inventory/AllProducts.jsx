@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { allProduct } from "../../routes/productRoutes";
+import { BACKEND_BASE_URL } from "../../config";
 
 const AllProducts = () => {
   const [items, setItems] = useState([]);
@@ -76,6 +77,9 @@ const AllProducts = () => {
               />
             </th>
             <th scope="col" className="px-6 py-3">
+              Product Image
+            </th>
+            <th scope="col" className="px-6 py-3">
               Product name
             </th>
             <th scope="col" className="px-6 py-3">
@@ -104,6 +108,17 @@ const AllProducts = () => {
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
               </td>
+              <td className="px-6 py-4">
+                              {item.item_image ? (
+                                <img
+                                  src={`${BACKEND_BASE_URL }${item.item_image }`}
+                                  alt="Image"
+                                  className="w-20 h-20 rounded-2xl object-cover"
+                                />
+                              ) : (
+                                <span className="text-gray-500 italic">No image</span>
+                              )}
+                            </td>
               <th
                 scope="row"
                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"

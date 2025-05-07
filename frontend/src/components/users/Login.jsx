@@ -63,9 +63,7 @@ const LoginPage = () => {
 
   return (
     <div
-      className=" bg-gradient-to-br from-teal-950 via-teal-700 to-slate-900
-"
-    >
+      className=" bg-gradient-to-br from-teal-950 via-teal-700 to-slate-900"    >
       <div className="h-screen flex items-center justify-center ">
         <div className="flex items-center w-full max-w-md  px-6 mx-auto lg:w-2/6 p-8 rounded-2xl ring ring-teal-900 shadow-lg/30 shadow-black-500/30 ">
           <div className="flex-1">
