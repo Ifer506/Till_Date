@@ -7,7 +7,11 @@ const API = axios.create({
 });
 
 export const addProduct = async (productData) => {
-  return API.post("/product/addProduct", productData);
+  return API.post(`/product/addProduct`, productData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 export const allProduct = async () => {

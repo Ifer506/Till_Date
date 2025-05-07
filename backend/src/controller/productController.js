@@ -6,6 +6,8 @@ const path = require("path");
 const { pool } = require("../../db");
 
 const addProduct = async (req, res) => {
+  console.log("File received:", req.file); // <---- Log this
+  console.log("Form fields:", req.body);
   try {
     const {
       itemId,
@@ -16,7 +18,6 @@ const addProduct = async (req, res) => {
       weight,
       purchasePrice,
       sellingPrice,
-      itemImage,
       supplierId,
       taxRate,
       discontInfo,
@@ -26,33 +27,54 @@ const addProduct = async (req, res) => {
       updatedDate,
     } = req.body;
 
+    console.log("Extracted form fields:", {
+      itemId,
+      itemName,
+      itemDesc,
+      quantity,
+      category,
+      weight,
+      purchasePrice,
+      sellingPrice,
+      supplierId,
+      taxRate,
+      discontInfo,
+      isActive,
+      recordLevel,
+      createdDate,
+      updatedDate,
+    });
+
     if (!itemName) {
       return res.status(400).json({ message: "item names are required" });
+      
     }
 
+    const itemImage = req.file ? req.file.path : null;
+
     const query = `
-        INSERT INTO products (
-          item_id,
-          item_name,
-          item_desc,
-          quantity,
-          category,
-          weight,
-          purchase_price,
-          selling_price,
-          item_image,
-          supplier_id,
-          tax_rate,
-          discont_info,
-          is_active,
-          record_level,
-          created_date,
-          updated_date
-        ) VALUES (
-          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-          $11, $12, $13, $14, $15, $16
-        ) RETURNING *;
-      `;
+      INSERT INTO products (
+        item_id,
+        item_name,
+        item_desc,
+        quantity,
+        category,
+        weight,
+        purchase_price,
+        selling_price,
+        item_image,
+        supplier_id,
+        tax_rate,
+        discont_info,
+        is_active,
+        record_level,
+        created_date,
+        updated_date
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+        $11, $12, $13, $14, $15, $16
+      ) RETURNING *;
+    `;
 
     const values = [
       itemId,
@@ -72,6 +94,9 @@ const addProduct = async (req, res) => {
       createdDate,
       updatedDate,
     ];
+
+    console.log("File received number 2:", req.file); // <---- Log this
+    console.log("Form fields number 2:", req.body);
 
     const result = await pool.query(query, values);
     res
@@ -112,34 +137,33 @@ const allProducts = async (req, res) => {
 };
 
 const deleteProduct = async (req, res) => {
-    try {
-      const itemId = req.params.id;
-  
-      const itemFound = await pool.query(
-        "SELECT * FROM products WHERE item_id = $1",
-        [itemId]
-      );
-  
-      const item = itemFound.rows[0];
-  
-      if (!item) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Item not found" });
-      }
-  
-      await pool.query("DELETE FROM products WHERE item_id = $1", [itemId]);
-  
-      res.json({ success: true, message: "Item has been deleted" });
-    } catch (error) {
-      console.error("Error deleting item:", error);
-      res.status(500).json({
-        success: false,
-        message: "Internal server error while deleting product",
-      });
+  try {
+    const itemId = req.params.id;
+
+    const itemFound = await pool.query(
+      "SELECT * FROM products WHERE item_id = $1",
+      [itemId]
+    );
+
+    const item = itemFound.rows[0];
+
+    if (!item) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Item not found" });
     }
-  };
-  
+
+    await pool.query("DELETE FROM products WHERE item_id = $1", [itemId]);
+
+    res.json({ success: true, message: "Item has been deleted" });
+  } catch (error) {
+    console.error("Error deleting item:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error while deleting product",
+    });
+  }
+};
 
 const varProduct = (req, res) => {};
 
