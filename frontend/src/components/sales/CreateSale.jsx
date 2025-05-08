@@ -1,23 +1,29 @@
-import React, { useEffect, useState } from 'react'
-import { BACKEND_BASE_URL } from '../../config';
-import { allProduct } from '../../routes/productRoutes';
+import React, { useEffect, useState } from "react";
+import { BACKEND_BASE_URL } from "../../config";
+import { allProduct } from "../../routes/productRoutes";
+import { searchRoutes } from "../../routes/searchRoutes";
 
 const CreateSale = () => {
-    const [items,setItems] = useState([]);
+  const [items, setItems] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
-    useEffect(() => {
-        const fetchItems = async () => {
-            try{
-                const response = await allProduct();
-                setItems(response.data.data)
-            }catch(error){
-                console.error("Well here we are" , error)
-            }
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        if (searchText.trim()) {
+          const response = await searchRoutes("products", searchText);
+          setItems(response.data.data);
+        } else {
+          const response = await allProduct();
+          setItems(response.data.data);
         }
+      } catch (error) {
+        console.error("Well here we are", error);
+      }
+    };
 
-        fetchItems();
-    }, []);
-
+    fetchItems();
+  }, [searchText]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-100">
@@ -27,6 +33,8 @@ const CreateSale = () => {
           <input
             type="text"
             id="table-search"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
             className="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Search for items"
           />
@@ -67,8 +75,12 @@ const CreateSale = () => {
                       No image
                     </div>
                   )}
-                  <p className="text-m font-medium text-center">{item.item_name}</p>
-                  <p className="text-sm text-gray-700">Rs {item.selling_price || "0.00"}</p>
+                  <p className="text-m font-medium text-center">
+                    {item.item_name}
+                  </p>
+                  <p className="text-sm text-gray-700">
+                    Rs {item.selling_price || "0.00"}
+                  </p>
                 </div>
               ))}
             </div>
@@ -81,7 +93,10 @@ const CreateSale = () => {
               <ul className="space-y-2 overflow-y-auto max-h-64">
                 {/* Placeholder cart items */}
                 {[...Array(3)].map((_, i) => (
-                  <li key={i} className="flex justify-between items-center border-b py-2">
+                  <li
+                    key={i}
+                    className="flex justify-between items-center border-b py-2"
+                  >
                     <div>
                       <p className="text-sm font-medium">Product {i + 1}</p>
                       <p className="text-xs text-gray-500">Qty: 1 × $10</p>
@@ -114,8 +129,7 @@ const CreateSale = () => {
         </div>
       </div>
     </div>
-  
   );
-}
+};
 
-export default CreateSale
+export default CreateSale;
