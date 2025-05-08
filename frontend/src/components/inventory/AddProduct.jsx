@@ -1,6 +1,6 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import * as Yup from "yup";
 import { addProduct } from "../../routes/productRoutes";
 

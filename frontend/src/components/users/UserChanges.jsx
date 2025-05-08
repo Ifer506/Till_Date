@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast ,Toaster} from "sonner";
 import { BACKEND_BASE_URL } from "../../config";
 import { userChange, userDetail } from "../../services/authServices";
 
@@ -27,7 +27,7 @@ const UserChanges = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    console.log("i have the file now");
+    // console.log("i have the file now");
     if (!file) return;
 
     // apparently the URL.createObjectURL() help to show a local preview of the file before upload
@@ -88,8 +88,10 @@ const UserChanges = () => {
       await userChange(userId, imageData);
       const updated = await userDetail(userId);
       setUser(updated.data.data);
+      toast.success("Profile picture updated!");
     } catch (error) {
       console.error("Failed to update profile picture:", error.message);
+      toast.error("Profile picture error!");
     }
   };
 

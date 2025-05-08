@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import logo from "../../assets/till_date_circle.png";
-// import { Toaster, toast } from 'sooner';
-import { Toaster, toast } from "react-hot-toast";
+import { Toaster, toast } from 'sonner';
+// import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../services/authServices";
 

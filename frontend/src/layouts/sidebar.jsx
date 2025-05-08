@@ -12,7 +12,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const location = useLocation();
 
   const menuItems = [

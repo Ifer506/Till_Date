@@ -1,27 +1,29 @@
 // src/App.jsx
 import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
+//so that messages can pop up to confirm that user has been changes or some other things
+// import { Toaster } from "react-hot-toast";
+import { Toaster } from 'sonner';
 import "./App.css";
 
 // Components
-import Home from "./components/Home";
-import LoginPage from "./components/users/Login";
-import UserChanges from "./components/users/UserChanges";
-import AllUsers from "./components/users/AllUsers";
-import Setting from "./components/users/Setting";
-import Inventory from "./components/inventory/Inventory";
-import AddProduct from "./components/inventory/AddProduct";
-import AllProducts from "./components/inventory/AllProducts";
-import Sales from "./components/sales/Sales";
-import Salary from "./components/salary/Salary";
 import Bill from "./components/bill/Bill";
 import Customers from "./components/customers/Customers";
-
+import Home from "./components/Home";
+import AddProduct from "./components/inventory/AddProduct";
+import AllProducts from "./components/inventory/AllProducts";
+import Inventory from "./components/inventory/Inventory";
+import Sales from "./components/sales/Sales";
+import AllUsers from "./components/users/AllUsers";
+import LoginPage from "./components/users/Login";
+import Setting from "./components/users/Setting";
+import UserChanges from "./components/users/UserChanges";
 
 // Layout
 import AppLayout from "./layouts/AppLayout";
 
 // Utils
+import CreateSale from "./components/sales/CreateSale";
 import { AuthProvider } from "./utils/authContext";
 import { RequireAuth } from "./utils/requireAuth";
 
@@ -40,6 +42,8 @@ function App() {
 
   return (
     <AuthProvider>
+      {/* <Toaster position="top-right" reverseOrder={false} /> */}
+      <Toaster richColors position="top-right" />
       <Routes>
         {/* Login Page - no layout */}
         <Route path="/" element={<LoginPage />} />
@@ -73,7 +77,7 @@ function App() {
           <Route path="allprofile" element={<AllUsers />} />
           <Route path="addProducts" element={<AddProduct />} />
           <Route path="allProducts" element={<AllProducts />} />
-
+          <Route path="createSales" element={<CreateSale />} />
         </Route>
       </Routes>
     </AuthProvider>
