@@ -1,21 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { allProduct } from "../../routes/productRoutes";
 import { BACKEND_BASE_URL } from "../../config";
+import { allProduct } from "../../routes/productRoutes";
+import { searchRoutes } from "../../routes/searchRoutes";
 
 const AllProducts = () => {
   const [items, setItems] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await allProduct();
-        setItems(response.data.data);
+        if (searchText.trim()) {
+          const response = await searchRoutes("products", searchText);
+          setItems(response.data.data);
+        } else {
+          const response = await allProduct();
+          setItems(response.data.data);
+        }
       } catch (error) {
-        console.error("There's an error while pulling data from product API");
+        console.error("Error fetching product data:", error);
       }
     };
     fetchItems();
-  }, []);
+  }, [searchText]);
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg p-6">
@@ -45,11 +52,12 @@ const AllProducts = () => {
           </button>
         </div>
         <div className="relative">
-          <input
+        <input
             type="text"
-            id="table-search"
-            className="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
             placeholder="Search for items"
+            className="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
           />
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <svg
@@ -109,16 +117,16 @@ const AllProducts = () => {
                 />
               </td>
               <td className="px-6 py-4">
-                              {item.item_image ? (
-                                <img
-                                  src={`${BACKEND_BASE_URL }${item.item_image }`}
-                                  alt="Image"
-                                  className="w-20 h-20 rounded-2xl object-cover"
-                                />
-                              ) : (
-                                <span className="text-gray-500 italic">No image</span>
-                              )}
-                            </td>
+                {item.item_image ? (
+                  <img
+                    src={`${BACKEND_BASE_URL}${item.item_image}`}
+                    alt="Image"
+                    className="w-20 h-20 rounded-2xl object-cover"
+                  />
+                ) : (
+                  <span className="text-gray-500 italic">No image</span>
+                )}
+              </td>
               <th
                 scope="row"
                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"

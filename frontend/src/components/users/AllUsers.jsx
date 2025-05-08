@@ -1,22 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { BACKEND_BASE_URL } from "../../config";
+import { searchRoutes } from "../../routes/searchRoutes";
 import { allprofile } from "../../services/authServices";
 
 const AllUsers = () => {
   const [users, setUsers] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await allprofile();
-        setUsers(response.data.data);
+        if (searchText.trim()) {
+          const response = await searchRoutes("users", searchText);
+          setUsers(response.data.data);
+        } else {
+          const response = await allprofile();
+          setUsers(response.data.data);
+        }
       } catch (error) {
         console.error("Failed to fetch users details:", error.message);
       }
     };
 
     fetchUser();
-  }, []);
+  }, [searchText]);
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg p-6">
@@ -54,6 +61,8 @@ const AllUsers = () => {
           <input
             type="text"
             id="table-search"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
             className="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Search for users"
           />

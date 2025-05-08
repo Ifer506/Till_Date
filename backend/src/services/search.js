@@ -3,7 +3,7 @@ import { pool } from "../../db.js";
 const allowedTables = {
     //the given below are type and query 
     // if type=users&query=asd , the fullname with asd will be provided
-  products: ["items_name", "description", "location"],
+    products: ["item_name", "supplier_id"],
   users: ["phone", "email", "fullname"],
 };
 
