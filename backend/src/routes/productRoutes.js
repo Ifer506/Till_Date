@@ -1,15 +1,20 @@
-const express = require("express");
-const router = express.Router();
-const upload = require("../middleware/uploadMiddleware");
-const productController = require("../controller/productController");
+import { Router } from "express";
+import productController from "../controller/productController.js";
+import upload from "../middleware/uploadMiddleware.js";
+const router = Router();
 
-router.get("/", (req,res) =>{ res.send("You have arrived at the inventory")} )
+router.get("/", (req, res) => {
+  res.send("You have arrived at the inventory");
+});
 
-router.post("/addProduct", upload.single("itemImage"),productController.addProduct);
+router.post(
+  "/addProduct",
+  upload.single("itemImage"),
+  productController.addProduct
+);
 
-router.get( "/allProducts" , productController.allProducts);
+router.get("/allProducts", productController.allProducts);
 
-router.delete("/deleteProduct/:id" , productController.deleteProduct);
+router.delete("/deleteProduct/:id", productController.deleteProduct);
 
-
-module.exports = router 
+export default router;

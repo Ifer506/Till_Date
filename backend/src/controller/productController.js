@@ -1,9 +1,6 @@
-const express = require("express");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import express from "express";
+import { pool } from "../../db.js";
 const app = express();
-const path = require("path");
-const { pool } = require("../../db");
 
 const addProduct = async (req, res) => {
   try {
@@ -164,4 +161,4 @@ const deleteProduct = async (req, res) => {
 
 const varProduct = (req, res) => {};
 
-module.exports = { addProduct, allProducts, deleteProduct };
+export default { addProduct, allProducts, deleteProduct };

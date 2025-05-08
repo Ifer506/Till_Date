@@ -1,66 +1,54 @@
-const dotenv = require("dotenv");
-const { connectDB } = require("./db");
-const express = require("express");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const path = require("path");
-const cors = require("cors");
+// index.js or server.js
 
+import { config } from "dotenv";
+import express from "express";
+const { json, static: expressStatic } = express;
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { join, dirname } from "path";
+import cors from "cors";
+import { fileURLToPath } from "url";
 
+// Import routes (must be ES modules too)
+import authRoutes from "./src/routes/authRoutes.js";
+import productRoute from "./src/routes/productRoutes.js";
+import enhancements from "./src/routes/enhancements.js";
 
+// Import database connection
+import { pool, connectDB } from "./db.js";
+// Setup __dirname equivalent in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-//configuring dotenv , where all secrets passthrough
-dotenv.config();
+// Load env variables
+config();
 
-//defining port == suggestion  = dotenv.config(); needs to be in first
+// Express setup
+const app = express();
 const PORT = process.env.HOST || 1000;
-
 const DB_Name = process.env.DB_Name;
 
-const app = express();
-
-//middleware
+// Middleware
 app.use(express.json());
-
 app.use(cors());
+app.use("/uploads", expressStatic(join(__dirname, "src/uploads")));
 
-//connect to database
+// Connect to DB
 connectDB();
 
-// Custom middleware
+// Test route
 app.get("/", (req, res) => {
   res.send("API is working");
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  // console.log(`Database name is ${DB_Name}`);
-});
-
-// this is the path files that are required for the api to connect
-// const authController = require("./src/controller/authController");
-
-
-app.use("/uploads", express.static(path.join(__dirname, "src/uploads")));
-
-
-const authRoutes = require("./src/routes/authRoutes");
-const productRoute = require("./src/routes/productRoutes");
-
+// Route usage
 app.use("/user", authRoutes);
 app.use("/product", productRoute);
+app.use("/enhancement", enhancements);
 
-module.exports = app;
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
 
-
-//this is just for testing the image path
-// const fs = require("fs");
-
-// app.get("/test-image", (req, res) => {
-//   const imgPath = path.join(__dirname, "src/uploads", "fire.jpeg");
-//   if (fs.existsSync(imgPath)) {
-//     res.sendFile(imgPath);
-//   } else {
-//     res.status(404).send("Image not found");
-//   }
-// });
+export default app;

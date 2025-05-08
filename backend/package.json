@@ -1,6 +1,7 @@
 {
   "name": "till_date_backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "This is the backend for the point of sales a.k.a pos system. Using node js as backend.",
   "main": "index.js",
   "scripts": {
@@ -22,7 +23,9 @@
     "pg": "^8.14.1"
   },
   "devDependencies": {
+    "@putout/plugin-convert-commonjs-to-esm": "^10.0.1",
     "jest": "^29.7.0",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "putout": "^40.0.27"
   }
 }

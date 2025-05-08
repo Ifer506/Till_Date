@@ -1,13 +1,18 @@
-const express = require("express");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import { compare, hash } from "bcrypt";
+import express from "express";
+import { existsSync, mkdirSync } from "fs";
+import { fileURLToPath } from 'url';
+import { dirname,extname, join } from "path";
+import {  pool } from "../../db.js";
+import pkg from 'jsonwebtoken';  // Default import of the CommonJS module
+const { sign } = pkg;
 const app = express();
-const path = require("path");
-const { pool } = require("../../db");
-const fs = require("fs");
 
-const multer = require("multer");
-const profileImage = path.join(__dirname, "uploads", "png");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+import multer, { diskStorage } from "multer";
+const profileImage = join(__dirname, "uploads", "png");
 
 // const signin = async (req,res) => {
 
@@ -79,7 +84,7 @@ const signup = async (req, res) => {
 
     // Hash the password
     const saltRounds = 12;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await hash(password, saltRounds);
 
     // Insert the user
     const insertQuery = `
@@ -129,14 +134,14 @@ const signin = async (req, res) => {
     }
 
     // Compare password
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await compare(password, user.password);
     console.log(password, user.password);
 
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials 2" });
     }
     // Generate JWT
-    const token = jwt.sign(
+    const token = sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
@@ -163,8 +168,6 @@ const userDetail = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found" });
     }
-
-    
 
     res.json({ success: true, data: user });
   } catch (error) {
@@ -228,7 +231,7 @@ const userUpdate = async (req, res) => {
 
     if (password) {
       const saltRounds = 12;
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      const hashedPassword = await hash(password, saltRounds);
       fields.push(`password = $${index++}`);
       values.push(hashedPassword);
     }
@@ -281,20 +284,20 @@ const userUpdate = async (req, res) => {
   }
 };
 
-const storage = multer.diskStorage({
+const storage = diskStorage({
   destination: (req, file, cb) => {
-    const dir = path.join(__dirname, "../uploads/userProfile");
+    const dir = join(__dirname, "../uploads/userProfile");
 
     // Auto-create the folder if it doesn't exist
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+    if (!existsSync(dir)) {
+      mkdirSync(dir, { recursive: true });
     }
 
     cb(null, dir);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+    cb(null, uniqueSuffix + extname(file.originalname));
   },
 });
 
@@ -360,12 +363,12 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = {
+export default {
   signup,
   signin,
   userDetail,
   userUpdate,
   allUsers,
   deleteUser,
-  upload
+  upload,
 };
