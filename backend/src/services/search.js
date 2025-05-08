@@ -1,12 +1,30 @@
 import { pool } from "../../db.js";
 
+const allowedTables = {
+    //the given below are type and query 
+    // if type=users&query=asd , the fullname with asd will be provided
+  products: ["items_name", "description", "location"],
+  users: ["phone", "email", "fullname"],
+};
+
 const searchFunction = async (req, res) => {
-  const { query } = req.query;
+  const { query, type } = req.query;
+
+  // Validate input
+  if (!query || !type || !allowedTables[type]) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid search parameters",
+    });
+  }
+
+  // Construct WHERE clause
+  const columns = allowedTables[type];
+  const whereClause = columns.map(col => `${col} ILIKE $1`).join(" OR ");
 
   try {
-    const result = await _query(
-      `SELECT * FROM jobs 
-         WHERE title ILIKE $1 OR description ILIKE $1 OR location ILIKE $1`,
+    const result = await pool.query(
+      `SELECT * FROM ${type} WHERE ${whereClause}`,
       [`%${query}%`]
     );
 
