@@ -62,11 +62,11 @@ const AddProduct = () => {
       // Send the request with form data
       const res = await addProduct(formData);
 
-      toast.success("Product added successfully!");
+      toast.success("Product added successfully!", {duration: 1550});
       resetForm();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to add product.");
+      toast.error("Failed to add product.", {duration: 1550});
     }
   };
 

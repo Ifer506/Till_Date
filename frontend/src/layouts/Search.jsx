@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { BACKEND_BASE_URL } from "../../config";
 import { allProduct } from "../../routes/productRoutes";
+import { debounce } from "lodash";
 
 const Search = () => {
   const [items, setItems] = useState([]);
@@ -21,12 +22,22 @@ const Search = () => {
     fetchItems();
   }, []);
 
+  // Debounced version of the filtering logic
+  const debouncedFilter = useCallback(
+    debounce((query, items) => {
+      const filtered = items.filter((item) =>
+        item.item_name.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredItems(filtered);
+    }, 300),
+    []
+  );
+
   useEffect(() => {
-    const filtered = items.filter((item) =>
-      item.item_name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredItems(filtered);
-  }, [searchQuery, items]);
+    debouncedFilter(searchQuery, items);
+    // Clean up on unmount
+    return () => debouncedFilter.cancel();
+  }, [searchQuery, items, debouncedFilter]);
 
   return (
     <div className="p-6 bg-white shadow-md rounded-lg">
@@ -73,7 +84,7 @@ const Search = () => {
               </div>
             )}
             <p className="text-sm font-medium text-center">{item.item_name}</p>
-            <p className="text-xs text-gray-500">${item.price || "0.00"}</p>
+            <p className="text-xs text-gray-500">Rs {item.price || "0.00"}</p>
           </div>
         ))}
       </div>

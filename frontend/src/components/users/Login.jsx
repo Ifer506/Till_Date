@@ -31,7 +31,7 @@ const LoginPage = () => {
     try {
       if (!email || !password) {
         // message.error("Fields cannot be left empty");
-        toast.error("Fields cannot be left empty");
+        toast.error("Fields cannot be left empty", {duration: 1550});
       } else {
         const user = {
           email: email,
@@ -44,20 +44,20 @@ const LoginPage = () => {
         console.log(response);
 
         if (response.data.success) {
-          toast.success(response.data.message || "Login successful!");
+          toast.success(response.data.message || "Login successful!", {duration: 1550});
           console.log("login successful");
 
           localStorage.setItem("token", response.data.token);
           navigate("/home");
         } else {
           console.log("failed");
-          toast.error(response.data.toast || "Login failed!");
+          toast.error(response.data.toast || "Login failed!", {duration: 1550});
 
           // toast.success(response.data.toast);
         }
       }
     } catch (error) {
-      toast.error("Unable to Login");
+      toast.error("Unable to Login", {duration: 1550});
     }
   };
 

@@ -49,7 +49,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         )}
       </div>
 
-      <nav className="mt-2 ">
+      <nav className="mt-5 ">
         {menuItems.map((item, idx) => {
           const isActive = location.pathname.startsWith(item.path); // active if path starts with menu path
 

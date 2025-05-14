@@ -88,10 +88,10 @@ const UserChanges = () => {
       await userChange(userId, imageData);
       const updated = await userDetail(userId);
       setUser(updated.data.data);
-      toast.success("Profile picture updated!");
+      toast.success("Profile picture updated!", {duration: 1550});
     } catch (error) {
       console.error("Failed to update profile picture:", error.message);
-      toast.error("Profile picture error!");
+      toast.error("Profile picture error!", {duration: 1550});
     }
   };
 
@@ -111,9 +111,9 @@ const UserChanges = () => {
       const updated = await userDetail(userId);
       setUser(updated.data.data);
       setPreviewChanged(false);
-      toast.success("Profile updated successfully!");
+      toast.success("Profile updated successfully!", {duration: 1550});
     } catch (error) {
-      toast.error("Failed to update profile:", error.message);
+      toast.error("Failed to update profile:", error.message, {duration: 1550});
     }
   };
 
