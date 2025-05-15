@@ -159,6 +159,6 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-const varProduct = (req, res) => {};
+
 
 export default { addProduct, allProducts, deleteProduct };

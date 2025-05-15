@@ -7,9 +7,9 @@ const API = axios.create({
 });
 
 export const createSales = async (salesData) => {
-  return API.post(`/product/salesItem`, salesData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  return API.post(`/sales/salesItem`, salesData );
 };
+
+export const salesDetail = async ( ) => {
+  return API.get("/sales/salesDetail")
+}

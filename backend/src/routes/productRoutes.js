@@ -17,4 +17,5 @@ router.get("/allProducts", productController.allProducts);
 
 router.delete("/deleteProduct/:id", productController.deleteProduct);
 
+
 export default router;

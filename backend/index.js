@@ -13,6 +13,8 @@ import { fileURLToPath } from "url";
 import authRoutes from "./src/routes/authRoutes.js";
 import productRoute from "./src/routes/productRoutes.js";
 import enhancements from "./src/routes/enhancements.js";
+import salesRoute from "./src/routes/salesRoutes.js";
+
 
 // Import database connection
 import { pool, connectDB } from "./db.js";
@@ -45,6 +47,7 @@ app.get("/", (req, res) => {
 app.use("/user", authRoutes);
 app.use("/product", productRoute);
 app.use("/enhancement", enhancements);
+app.use("/sales", salesRoute);
 
 // Start server
 app.listen(PORT, () => {
