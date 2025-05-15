@@ -18,6 +18,16 @@ const CreateSale = () => {
   const [activeTab, setActiveTab] = useState("cart");
   const [applyTax, setApplyTax] = useState(true);
   const [customerInfo, setCustomerInfo] = useState({
+    company_name: "",
+    company_address: "",
+    vat_number: "",
+    pan_number: "",
+    business_use: "",
+    contact_name: "",
+    contact_number: "",
+  });
+
+  const customerPlaceholders = {
     company_name: "Chaudhary Group",
     company_address: "Sanepa, Lalitpur, Nepal",
     vat_number: "VAT123456789",
@@ -25,7 +35,7 @@ const CreateSale = () => {
     business_use: "Retail",
     contact_name: "Binod Chaudhary",
     contact_number: "+977-9800000000",
-  });
+  };
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -334,6 +344,7 @@ const CreateSale = () => {
                   <div className="space-y-3">
                     {Object.entries(customerInfo).map(([key, value]) => (
                       <div key={key} className="flex flex-col">
+                        {/* this is what is above the input field a.k.a Company Name */}
                         <label className="text-xs capitalize">
                           {key.replace(/_/g, " ")}
                         </label>
@@ -347,7 +358,7 @@ const CreateSale = () => {
                             }))
                           }
                           className="px-2 py-1 border rounded text-sm"
-                          placeholder={`Enter ${key.replace(/_/g, " ")}`}
+                          placeholder={customerPlaceholders[key]}
                         />
                       </div>
                     ))}
@@ -379,6 +390,20 @@ const CreateSale = () => {
                       };
                       const response = await createSales(payload);
                       clearCart();
+                      setCustomerInfo({
+                        company_name: "",
+                        company_address: "",
+                        vat_number: "",
+                        pan_number: "",
+                        business_use: "",
+                        contact_name: "",
+                        contact_number: "",
+                      });
+
+                      // Refresh the page after a short delay so the toast can show
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 100);
                       toast.success("Sale completed successfully!", {
                         duration: 1550,
                       });
