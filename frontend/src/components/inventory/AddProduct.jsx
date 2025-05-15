@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import * as Yup from "yup";
 import { addProduct } from "../../routes/productRoutes";
@@ -62,11 +62,11 @@ const AddProduct = () => {
       // Send the request with form data
       const res = await addProduct(formData);
 
-      toast.success("Product added successfully!", {duration: 1550});
+      toast.success("Product added successfully!", { duration: 1550 });
       resetForm();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to add product.", {duration: 1550});
+      toast.error("Failed to add product.", { duration: 1550 });
     }
   };
 
