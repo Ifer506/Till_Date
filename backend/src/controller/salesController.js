@@ -94,7 +94,7 @@ const sellProduct = async (req, res) => {
 
 const salesDetail = async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM sales ORDER BY sale_id");
+    const result = await pool.query("SELECT * FROM sales ORDER BY id");
     const sales = result.rows;
 
     if (result.rows == 0) {
