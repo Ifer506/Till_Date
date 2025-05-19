@@ -27,7 +27,7 @@ const sellProduct = async (req, res) => {
     const processedItems = [];
 
     // Validate and update quantity
-    for (const { item_id, quantity } of items) {
+    for (const { item_id, quantity,price } of items) {
       // Check if product exists and get available quantity
       const productResult = await client.query(
         "SELECT item_name, quantity FROM products WHERE item_id = $1 FOR UPDATE",
@@ -58,6 +58,7 @@ const sellProduct = async (req, res) => {
         item_id,
         item_name: product.item_name,
         quantity,
+        price
       });
     }
 
@@ -102,7 +103,7 @@ const salesDetail = async (req, res) => {
         .status(404)
         .json({ success: false, message: "sales report not found" });
     } else {
-      console.log("sales found");
+      // console.log("sales found");
       res.status(201).json({ success: true, data: sales });
     }
   } catch (error) {

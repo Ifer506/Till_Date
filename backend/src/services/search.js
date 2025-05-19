@@ -1,10 +1,17 @@
 import { pool } from "../../db.js";
 
 const allowedTables = {
-    //the given below are type and query 
-    // if type=users&query=asd , the fullname with asd will be provided
-    products: ["item_name", "supplier_id"],
+  //the given below are type and query
+  // if type=users&query=asd , the fullname with asd will be provided
+  products: ["item_name", "supplier_id"],
   users: ["phone", "email", "fullname"],
+  sales: [
+    "company_name",
+    "vat_number",
+    "contact_name",
+    "contact_number",
+    "total_amount",
+  ],
 };
 
 const searchFunction = async (req, res) => {
@@ -20,7 +27,9 @@ const searchFunction = async (req, res) => {
 
   // Construct WHERE clause
   const columns = allowedTables[type];
-  const whereClause = columns.map(col => `${col} ILIKE $1`).join(" OR ");
+  const whereClause = columns
+    .map((col) => `CAST(${col} AS TEXT) ILIKE $1`)
+    .join(" OR ");
 
   try {
     const result = await pool.query(

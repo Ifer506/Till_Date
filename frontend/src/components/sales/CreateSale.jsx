@@ -119,7 +119,7 @@ const CreateSale = () => {
     (sum, item) => sum + item.quantity * (item.selling_price || 0),
     0
   );
-  const taxAmount = applyTax ? subtotal * 0.08 : 0;
+  const taxAmount = applyTax ? subtotal * 0.13 : 0;
   const total = subtotal + taxAmount;
 
   // For tab underline animation
@@ -316,7 +316,7 @@ const CreateSale = () => {
                     </div>
                     {applyTax && (
                       <div className="flex justify-between">
-                        <span>Tax (8%)</span>
+                        <span>Tax (13%)</span>
                         <span>Rs {taxAmount.toFixed(2)}</span>
                       </div>
                     )}
@@ -378,18 +378,16 @@ const CreateSale = () => {
                       return;
                     }
                     try {
-                      const payload = {
+                      const salesData = {
                         items: cartItems.map((item) => ({
                           item_id: item.item_id,
                           quantity: item.quantity,
                           price: item.selling_price,
                         })),
                         total_amount: subtotal,
-                        customer_info: customerInfo,
                         tax_applied: applyTax,
+                        ...customerInfo, //  This spreads each customer field into the root level
                       };
-                      const response = await createSales(payload);
-                      clearCart();
                       setCustomerInfo({
                         company_name: "",
                         company_address: "",
@@ -399,6 +397,15 @@ const CreateSale = () => {
                         contact_name: "",
                         contact_number: "",
                       });
+
+                      const response = await createSales(salesData);
+                      console.log("Sales detail response:", response.data);
+                      console.log(
+                        "Sales detail message:",
+                        response.data.message
+                      );
+
+                      clearCart();
 
                       // Refresh the page after a short delay so the toast can show
                       setTimeout(() => {
