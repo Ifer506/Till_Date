@@ -64,3 +64,184 @@ module.exports = app;
 //     res.status(404).send("Image not found");
 //   }
 // });
+
+
+
+
+const updateProduct = async (req, res) => {
+  try {
+    const itemImage = req.file ? `uploads/itemsImage/${req.file.filename}` : null;
+    const {
+      itemId,
+      itemName,
+      itemDesc,
+      quantity,
+      category,
+      weight,
+      purchasePrice,
+      sellingPrice,
+      supplierId,
+      taxRate,
+      discontInfo,
+      isActive,
+      recordLevel,
+      updatedDate,
+    } = req.body;
+
+    if (!itemId) {
+      return res.status(400).json({ message: "Item ID is required" });
+    }
+
+    // Fetch existing product (optional, for existence check)
+    const productRes = await pool.query("SELECT * FROM products WHERE item_id = $1", [itemId]);
+    if (productRes.rows.length === 0) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Build fields and values dynamically
+    const fields = [];
+    const values = [];
+    let index = 1;
+
+    const addField = (fieldName, value) => {
+      if (value !== undefined && value !== null) {
+        fields.push(`${fieldName} = $${index++}`);
+        values.push(value);
+      }
+    };
+
+    addField("item_name", itemName);
+    addField("item_desc", itemDesc);
+    addField("quantity", quantity);
+    addField("category", category);
+    addField("weight", weight);
+    addField("purchase_price", purchasePrice);
+    addField("selling_price", sellingPrice);
+    addField("supplier_id", supplierId);
+    addField("tax_rate", taxRate);
+    addField("discont_info", discontInfo);
+    addField("is_active", isActive);
+    addField("record_level", recordLevel);
+    addField("updated_date", updatedDate);
+    if (itemImage) {
+      addField("item_image", itemImage);
+    }
+
+    if (fields.length === 0) {
+      return res.status(400).json({ message: "No fields provided to update" });
+    }
+
+    const query = `
+      UPDATE products SET ${fields.join(", ")}
+      WHERE item_id = $${index}
+      RETURNING *;
+    `;
+    values.push(itemId); // Final value is for WHERE condition
+
+    const result = await pool.query(query, values);
+
+    res.json({
+      success: true,
+      message: "Product updated successfully",
+      product: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Error updating product:", error);
+    res.status(500).json({ message: "Server error while updating product" });
+  }
+};
+
+
+
+        ------------------------------------VS---------------------------------
+
+const updateProduct = async (req, res) => {
+  try {
+    const itemImage = req.file ? `uploads/itemsImage/${req.file.filename}` : null;
+    const {
+      itemId,
+      itemName,
+      itemDesc,
+      quantity,
+      category,
+      weight,
+      purchasePrice,
+      sellingPrice,
+      supplierId,
+      taxRate,
+      discontInfo,
+      isActive,
+      recordLevel,
+      updatedDate,
+    } = req.body;
+
+    if (!itemId) {
+      return res.status(400).json({ message: "Item ID is required" });
+    }
+
+    // Fetch existing product (optional, for existence check)
+    const productRes = await pool.query("SELECT * FROM products WHERE item_id = $1", [itemId]);
+    if (productRes.rows.length === 0) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Build fields and values dynamically
+    const fields = [];
+    const values = [];
+    let index = 1;
+
+    const addField = (fieldName, value) => {
+      if (value !== undefined && value !== null) {
+        fields.push(`${fieldName} = $${index++}`);
+        values.push(value);
+      }
+    };
+
+    addField("item_name", itemName);
+    addField("item_desc", itemDesc);
+    addField("quantity", quantity);
+    addField("category", category);
+    addField("weight", weight);
+    addField("purchase_price", purchasePrice);
+    addField("selling_price", sellingPrice);
+    addField("supplier_id", supplierId);
+    addField("tax_rate", taxRate);
+    addField("discont_info", discontInfo);
+    addField("is_active", isActive);
+    addField("record_level", recordLevel);
+    addField("updated_date", updatedDate);
+    if (itemImage) {
+      addField("item_image", itemImage);
+    }
+
+    if (fields.length === 0) {
+      return res.status(400).json({ message: "No fields provided to update" });
+    }
+
+    const query = `
+      UPDATE products SET ${fields.join(", ")}
+      WHERE item_id = $${index}
+      RETURNING *;
+    `;
+    values.push(itemId); // Final value is for WHERE condition
+
+    const result = await pool.query(query, values);
+
+    res.json({
+      success: true,
+      message: "Product updated successfully",
+      product: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Error updating product:", error);
+    res.status(500).json({ message: "Server error while updating product" });
+  }
+};
+
+
+| Feature               | Old Version                           | New Version (Refactored)        |
+| --------------------- | ------------------------------------- | ------------------------------- |
+| Manual index shifting | ❌ Yes – error-prone                   | ✅ No – indexes auto-increment   |
+| Maintainability       | ❌ Hard to add/remove fields           | ✅ Easy – just call `addField()` |
+| Clean structure       | ❌ Cluttered logic inside query string | ✅ Separated logic, readable     |
+| Query safety          | ⚠️ Prone to mismatched placeholders   | ✅ Fully aligned placeholders    |

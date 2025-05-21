@@ -13,3 +13,7 @@ export const createSales = async (salesData) => {
 export const salesDetail = async ( ) => {
   return API.get("/sales/salesDetail")
 }
+
+export const salesDelete = async ( id) => {
+  return API.delete(`/sales/salesDelete/${id}`,id)
+}

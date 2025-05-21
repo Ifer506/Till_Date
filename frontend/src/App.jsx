@@ -13,12 +13,14 @@ import Home from "./components/Home";
 import AddProduct from "./components/inventory/AddProduct";
 import AllProducts from "./components/inventory/AllProducts";
 import Inventory from "./components/inventory/Inventory";
+import EditProduct from "./components/inventory/EditProduct";
 import Sales from "./components/sales/Sales";
 import SalesDetail from "./components/sales/SalesDetail";
 import AllUsers from "./components/users/AllUsers";
 import LoginPage from "./components/users/Login";
 import Setting from "./components/users/Setting";
 import UserChanges from "./components/users/UserChanges";
+
 
 // Layout
 import AppLayout from "./layouts/AppLayout";
@@ -80,6 +82,7 @@ function App() {
           <Route path="allProducts" element={<AllProducts />} />
           <Route path="createSales" element={<CreateSale />} />
           <Route path="salesDetails" element={<SalesDetail />} />
+          <Route path="editProduct/:id" element={<EditProduct/>}/>
         </Route>
       </Routes>
     </AuthProvider>

@@ -17,5 +17,9 @@ router.get("/allProducts", productController.allProducts);
 
 router.delete("/deleteProduct/:id", productController.deleteProduct);
 
+router.put("/updateProduct/:id" , productController.updateProduct);
+
+router.get("/oneProducts/:id", productController.oneProduct);
+
 
 export default router;

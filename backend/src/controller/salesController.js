@@ -27,7 +27,7 @@ const sellProduct = async (req, res) => {
     const processedItems = [];
 
     // Validate and update quantity
-    for (const { item_id, quantity,price } of items) {
+    for (const { item_id, quantity, price } of items) {
       // Check if product exists and get available quantity
       const productResult = await client.query(
         "SELECT item_name, quantity FROM products WHERE item_id = $1 FOR UPDATE",
@@ -58,7 +58,7 @@ const sellProduct = async (req, res) => {
         item_id,
         item_name: product.item_name,
         quantity,
-        price
+        price,
       });
     }
 
@@ -115,4 +115,60 @@ const salesDetail = async (req, res) => {
   }
 };
 
-export default { sellProduct, salesDetail };
+const salesDelete = async (req, res) => {
+  try {
+    const salesId = req.params.id;
+
+    // ✅ Step 1: Fetch the sale from `sales` table
+    const result = await pool.query("SELECT * FROM sales WHERE id = $1", [salesId]);
+    const sale = result.rows[0];
+
+    if (!sale) {
+      return res.status(404).json({
+        success: false,
+        message: "Sale not found",
+      });
+    }
+
+    console.log("🔍 Sale record fetched:", sale);
+
+    // ✅ Step 2: Parse the `items` JSON array from the sale
+    const items = sale.items; // Assuming this is stored as JSON/JSONB in DB
+
+    if (!Array.isArray(items)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid sale format: items must be an array",
+      });
+    }
+
+    console.log("📦 Items to restock:", items);
+
+    // ✅ Step 3: Loop through each item and restock in `products` table
+    for (const item of items) {
+      await pool.query(
+        "UPDATE products SET quantity = quantity + $1 WHERE item_id = $2", // ✅ changed to `products` and `item_id`
+        [item.quantity, item.item_id]
+      );
+    }
+
+    // ✅ Step 4: Delete the sale record
+    await pool.query("DELETE FROM sales WHERE id = $1", [salesId]);
+
+    // ✅ Step 5: Respond with deleted sale items
+    res.json({
+      success: true,
+      message: "Sale deleted and inventory updated.",
+      returnedItems: items,
+    });
+  } catch (error) {
+    console.error("❌ Error deleting sale:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error while deleting sale",
+    });
+  }
+};
+
+
+export default { sellProduct, salesDetail, salesDelete };

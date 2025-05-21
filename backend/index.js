@@ -15,7 +15,6 @@ import productRoute from "./src/routes/productRoutes.js";
 import enhancements from "./src/routes/enhancements.js";
 import salesRoute from "./src/routes/salesRoutes.js";
 
-
 // Import database connection
 import { pool, connectDB } from "./db.js";
 // Setup __dirname equivalent in ESM

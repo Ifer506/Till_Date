@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { BACKEND_BASE_URL } from "../../config";
-import { allProduct } from "../../routes/productRoutes";
+import { allProduct ,updateProduct} from "../../routes/productRoutes";
 import { searchRoutes } from "../../routes/searchRoutes";
+import { Link } from "react-router-dom";
 
 const AllProducts = () => {
   const [items, setItems] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -23,6 +26,29 @@ const AllProducts = () => {
     };
     fetchItems();
   }, [searchText]);
+
+  const handleEditClick = (product) => {
+    setSelectedProduct(product);
+    setEditModalOpen(true);
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      const response = await updateProduct(selectedProduct); // Assuming updateProduct accepts the updated product object
+      if (response.data.success) {
+        // Handle success
+        console.log("Product updated successfully:", response.data.product);
+        // Optionally, close modal or update UI
+        setEditModalOpen(false);
+      } else {
+        // Handle failure
+        console.error("Failed to update product:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error updating product:", error);
+    }
+  };
+
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg p-6">
@@ -52,7 +78,7 @@ const AllProducts = () => {
           </button>
         </div>
         <div className="relative">
-        <input
+          <input
             type="text"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
@@ -88,10 +114,7 @@ const AllProducts = () => {
               Product Image
             </th>
             <th scope="col" className="px-6 py-3">
-              Product name
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Description
+              Name
             </th>
             <th scope="col" className="px-6 py-3">
               Quantity
@@ -100,16 +123,19 @@ const AllProducts = () => {
               Category
             </th>
             <th scope="col" className="px-6 py-3">
+              Price
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Active
+            </th>
+            <th scope="col" className="px-6 py-3">
               Action
             </th>
           </tr>
         </thead>
         <tbody>
-          {items.map((item, idx) => (
-            <tr
-              key={item.item_id}
-              className="bg-white border-b hover:bg-gray-50"
-            >
+          {items.map((item) => (
+            <tr key={item.item_id} className="bg-white border-b hover:bg-gray-50">
               <td className="p-4">
                 <input
                   type="checkbox"
@@ -120,34 +146,36 @@ const AllProducts = () => {
                 {item.item_image ? (
                   <img
                     src={`${BACKEND_BASE_URL}${item.item_image}`}
-                    alt="Image"
+                    alt="Product"
                     className="w-20 h-20 rounded-2xl object-cover"
                   />
                 ) : (
                   <span className="text-gray-500 italic">No image</span>
                 )}
               </td>
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-              >
+              <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                 {item.item_name}
-              </th>
-              <td className="px-6 py-4">{item.item_desc}</td>
+              </td>
               <td className="px-6 py-4">{item.quantity}</td>
               <td className="px-6 py-4">{item.category || "N/A"}</td>
+              <td className="px-6 py-4">{item.selling_price}</td>
+              <td className={`px-6 py-4 ${item.is_active ? 'text-teal-500' : 'text-red-800'}`}>
+                {item.is_active ? 'Active' : 'Inactive'}
+              </td>
               <td className="px-6 py-4">
-                <a
-                  href="#"
+                <Link
+                  to={`/editProduct/${item.item_id}`}
                   className="font-medium text-blue-600 hover:underline"
                 >
                   Edit
-                </a>
+                </Link>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      
     </div>
   );
 };

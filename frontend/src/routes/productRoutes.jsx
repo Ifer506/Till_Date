@@ -17,3 +17,17 @@ export const addProduct = async (productData) => {
 export const allProduct = async () => {
   return API.get("/product/allProducts");
 };
+
+export const updateProduct = async (id, product) => {
+  try {
+    const response = await API.put(`/product/updateProduct/${id}`, product);
+    return response.data; // Assuming your API returns a success message or updated product data
+  } catch (error) {
+    throw new Error(error.response.data.message); // Handle errors appropriately
+  }
+};
+
+export const oneProduct = async (id) => {
+  return API.get(`/product/allProducts/${id}`,id);
+};
+
