@@ -82,7 +82,7 @@ function App() {
           <Route path="allProducts" element={<AllProducts />} />
           <Route path="createSales" element={<CreateSale />} />
           <Route path="salesDetails" element={<SalesDetail />} />
-          <Route path="editProduct/:id" element={<EditProduct/>}/>
+          <Route path="editProduct/:itemId" element={<EditProduct/>}/>
         </Route>
       </Routes>
     </AuthProvider>

@@ -17,7 +17,7 @@ router.get("/allProducts", productController.allProducts);
 
 router.delete("/deleteProduct/:id", productController.deleteProduct);
 
-router.put("/updateProduct/:id" , productController.updateProduct);
+router.put("/updateProduct/:id", upload.single("itemImage"), productController.updateProduct);
 
 router.get("/oneProducts/:id", productController.oneProduct);
 

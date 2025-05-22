@@ -1,16 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import { BACKEND_BASE_URL } from "../../config";
 import { useParams } from "react-router-dom";
-import { oneProduct ,updateProduct} from "../../routes/productRoutes";
+import { BACKEND_BASE_URL } from "../../config";
+import { oneProduct, updateProduct } from "../../routes/productRoutes";
+import { toast } from "sonner";
 
 const EditProduct = () => {
   const [items, setItems] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [status, setStatus] = useState("active");
+  const [status, setStatus] = useState(true);
   const [previewChanged, setPreviewChanged] = useState(false);
   const [previewURL, setPreviewURL] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const { itemId } = useParams(); // sincce the data id were getting from is the url
+  const [error, setError] = useState("");
 
   // its only for changing tabs
   const TABS = [
@@ -75,9 +77,9 @@ const EditProduct = () => {
     setSelectedFile(file);
     setPreviewChanged(true);
 
-    setFormData((prev) => ({
+    setItems((prev) => ({
       ...prev,
-      profilepic: newPreviewURL,
+      item_image: newPreviewURL,
     }));
 
     if (previewURL) {
@@ -125,14 +127,15 @@ const EditProduct = () => {
   }, [itemId, previewURL]);
 
   const handleStatusChange = (e) => {
-    setStatus(e.target.value);
+    const value = e.target.value;
+  setStatus(value === "active");
   };
 
   //handle changes for images
   const handleImageSubmit = async () => {
     if (!selectedFile) return;
     const imageData = new FormData();
-    imageData.append("item_image", selectedFile);
+    imageData.append("itemImage", selectedFile);
     try {
       await updateProduct(itemId, imageData);
       const updated = await updateProduct(itemId);
@@ -158,30 +161,45 @@ const EditProduct = () => {
       updatedData.append("supplier_id", formData.supplier_id);
       updatedData.append("tax_rate", formData.tax_rate);
       updatedData.append("discont_info", formData.discont_info);
-      updatedData.append("is_active", status); // from state
+      updatedData.append("is_active", status === "active"); // from state
       updatedData.append("record_level", formData.record_level);
-
+      
       if (selectedFile) {
-        updatedData.append("item_image", selectedFile);
+        updatedData.append("itemImage", selectedFile);
       }
-
-      // Replace this with your actual update function for product
-      await updateProduct(itemId, updatedData);
-
-      toast.success("Product updated successfully!", { duration: 1550 });
+      
+      // Replace this with update function for product
+      const updated = await updateProduct(itemId, updatedData);
+      
+      
+      setItems(updated.data.data);
+      
       setPreviewChanged(false);
+      toast.success("Product updated successfully!", { duration: 1550 });
     } catch (error) {
       console.error("Error updating product:", error.message);
       toast.error("Failed to update product!", { duration: 1550 });
     }
   };
 
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    // Update form data
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    // Live validation
+    if (value.trim() === "") {
+      setError("Product name cannot be empty.");
+    } else if (value.length < 3) {
+      setError("Product name must be at least 3 characters.");
+    } else {
+      setError("");
+    }
   };
 
   return (
@@ -195,15 +213,17 @@ const EditProduct = () => {
                 <span className="text-2xl  bold text-shadow-lg/10">
                   Thumbnail
                 </span>
-                <div className="flex flex-col items-center p-8">
+                <div className="flex flex-col items-center p-8 ">
                   <label
-                    htmlFor="items-pic-upload"
+                    htmlFor="item-pic-upload"
                     className="relative group cursor-pointer"
                   >
                     <img
-                      src={previewURL || `${items.item_image}`}
+                      src={
+                        previewURL || `${BACKEND_BASE_URL}${items.item_image}`
+                      }
                       alt="Profile"
-                      className="w-50 h-50 rounded-3xl shadow-md object-cover"
+                      className="w-50 h-50 rounded-3xl shadow-md object-cover border-2 border-gray-200"
                     />
 
                     {/* Edit Icon Overlay */}
@@ -247,7 +267,7 @@ const EditProduct = () => {
                 <div className="text-2xl  bold text-shadow-lg/10">Status</div>
                 <div className=" border-gray-200  p-4  w-[150px] md:w-[270px]  text-center">
                   <select
-                    value={status}
+                     value={status ? "active" : "inactive"}
                     onChange={handleStatusChange}
                     className="w-full mt-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
                   >
@@ -303,8 +323,68 @@ const EditProduct = () => {
                   </label>
                   <input
                     type="text"
-                    name="Item name"
+                    name="item_name"
                     value={formData.item_name}
+                    onChange={handleInputChange}
+                    className="w-1/2 border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-base mb-2 text-gray-800 text-shadow-xl font-medium pt-4">
+                    Description -{" "}
+                  </label>
+                  <input
+                    type="text"
+                    name="item_name"
+                    value={formData.item_desc}
+                    onChange={handleInputChange}
+                    className="w-1/2 border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-base mb-2 text-gray-800 text-shadow-xl font-medium pt-4">
+                    Quantity -{" "}
+                  </label>
+                  <input
+                    type="text"
+                    name="item_name"
+                    value={formData.quantity}
+                    onChange={handleInputChange}
+                    className="w-1/2 border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-base mb-2 text-gray-800 text-shadow-xl font-medium pt-4">
+                    Weight -{" "}
+                  </label>
+                  <input
+                    type="text"
+                    name="item_name"
+                    value={formData.weight}
+                    onChange={handleInputChange}
+                    className="w-1/2 border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-base mb-2 text-gray-800 text-shadow-xl font-medium pt-4">
+                    Selling Price -{" "}
+                  </label>
+                  <input
+                    type="text"
+                    name="item_name"
+                    value={formData.selling_price}
+                    onChange={handleInputChange}
+                    className="w-1/2 border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-base mb-2 text-gray-800 text-shadow-xl font-medium pt-4">
+                    Supplier Name -{" "}
+                  </label>
+                  <input
+                    type="text"
+                    name="item_name"
+                    value={formData.supplier_id}
                     onChange={handleInputChange}
                     className="w-1/2 border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-100"
                   />
@@ -312,7 +392,6 @@ const EditProduct = () => {
               </div>
             )}
 
-           
             {activeTab === "advanced" && (
               <div>
                 <h2 className="text-xl font-semibold mb-4">
@@ -324,15 +403,14 @@ const EditProduct = () => {
               </div>
             )}
 
-             <div className="mt-6">
+            <div className="mt-6">
               <button
-                type="submit"
+                onClick={handleSubmit}
                 className="bg-blue-900 hover:bg-indigo-900 text-white font-semibold py-2 px-6 rounded-lg"
               >
                 Save
               </button>
             </div>
-
           </div>
         </div>
       </div>

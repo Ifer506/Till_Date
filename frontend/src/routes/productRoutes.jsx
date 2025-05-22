@@ -20,14 +20,17 @@ export const allProduct = async () => {
 
 export const updateProduct = async (id, product) => {
   try {
-    const response = await API.put(`/product/updateProduct/${id}`, product);
-    return response.data; // Assuming your API returns a success message or updated product data
+    const response = await API.put(`/product/updateProduct/${id}`, product, {
+      headers: {
+        "Content-Type": "multipart/form-data", // ✅ CRITICAL
+      },
+    });
+    return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message); // Handle errors appropriately
+    throw new Error(error.response?.data?.message || "Unknown error");
   }
 };
 
 export const oneProduct = async (id) => {
-  return API.get(`/product/allProducts/${id}`,id);
+  return API.get(`/product/oneProducts/${id}`);
 };
-
