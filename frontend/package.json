@@ -38,6 +38,7 @@
     "sonner": "^2.0.3",
     "sooner": "^1.1.4",
     "styled-components": "^6.1.17",
+    "supertokens-web-js": "^0.15.0",
     "tailwindcss": "^4.1.4",
     "yup": "^1.6.1"
   },

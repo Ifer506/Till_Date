@@ -32,7 +32,9 @@ export const userChange = async (id, formData) => {
 
 //get image of the user and upload it
 export const profileImg = async () => {
-  return API.get(`http://localhost:3000/uploads/userProfile/${user.profilepic}`);
+  return API.get(
+    `http://localhost:3000/uploads/userProfile/${user.profilepic}`
+  );
 };
 
 // export const getPicByID = async () => {
